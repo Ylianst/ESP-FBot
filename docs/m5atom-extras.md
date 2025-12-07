@@ -21,6 +21,6 @@ binary_sensor:
       - switch.toggle: light_switch
 ```
 
-Instead of `light_switch` the other possible values for `switch.toggle` are `usb_switch`, `dc_switch` and `ac_switch`.
+Instead of `light_switch` the other possible values are `switch.toggle` are `usb_switch`, `dc_switch` and `ac_switch`.
 
 Nice way to control your battery from a short distance.
