@@ -12,7 +12,7 @@ CONF_DC_ACTIVE = "dc_active"
 CONF_AC_ACTIVE = "ac_active"
 CONF_LIGHT_ACTIVE = "light_active"
 
-# DEVICE_CLASS_OUTLET = "plug"
+DEVICE_CLASS_OUTLET = "switch"
 DEVICE_CLASS_LIGHT = "light"
 
 CONFIG_SCHEMA = cv.Schema(
@@ -22,13 +22,13 @@ CONFIG_SCHEMA = cv.Schema(
             device_class=DEVICE_CLASS_CONNECTIVITY,
         ),
         cv.Optional(CONF_USB_ACTIVE): binary_sensor.binary_sensor_schema(
-            device_class=DEVICE_CLASS_SWITCH,
+            device_class=DEVICE_CLASS_OUTLET,
         ),
         cv.Optional(CONF_DC_ACTIVE): binary_sensor.binary_sensor_schema(
-            device_class=DEVICE_CLASS_SWITCH,
+            device_class=DEVICE_CLASS_OUTLET,
         ),
         cv.Optional(CONF_AC_ACTIVE): binary_sensor.binary_sensor_schema(
-            device_class=DEVICE_CLASS_SWITCH,
+            device_class=DEVICE_CLASS_OUTLET,
         ),
         cv.Optional(CONF_LIGHT_ACTIVE): binary_sensor.binary_sensor_schema(
             device_class=DEVICE_CLASS_LIGHT,
