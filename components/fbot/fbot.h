@@ -70,6 +70,12 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
     this->light_active_binary_sensor_ = sensor; 
   }
   
+  // Switch setters
+  void set_usb_switch(switch_::Switch *sw) { this->usb_switch_ = sw; }
+  void set_dc_switch(switch_::Switch *sw) { this->dc_switch_ = sw; }
+  void set_ac_switch(switch_::Switch *sw) { this->ac_switch_ = sw; }
+  void set_light_switch(switch_::Switch *sw) { this->light_switch_ = sw; }
+  
   // Control methods for switches
   void control_usb(bool state);
   void control_dc(bool state);
@@ -104,6 +110,12 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   binary_sensor::BinarySensor *dc_active_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *ac_active_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *light_active_binary_sensor_{nullptr};
+  
+  // Switches
+  switch_::Switch *usb_switch_{nullptr};
+  switch_::Switch *dc_switch_{nullptr};
+  switch_::Switch *ac_switch_{nullptr};
+  switch_::Switch *light_switch_{nullptr};
   
   // Protocol methods
   uint16_t calculate_checksum(const uint8_t *data, size_t len);

@@ -51,3 +51,13 @@ async def to_code(config):
             await cg.register_component(var, config[key])
             cg.add(var.set_parent(parent))
             cg.add(var.set_switch_type(switch_type))
+            
+            # Register switch with parent to enable state synchronization
+            if key == CONF_USB:
+                cg.add(parent.set_usb_switch(var))
+            elif key == CONF_DC:
+                cg.add(parent.set_dc_switch(var))
+            elif key == CONF_AC:
+                cg.add(parent.set_ac_switch(var))
+            elif key == CONF_LIGHT:
+                cg.add(parent.set_light_switch(var))

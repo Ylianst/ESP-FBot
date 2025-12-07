@@ -280,6 +280,20 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
     this->light_active_binary_sensor_->publish_state(light_state);
   }
   
+  // Sync switch states with device state
+  if (this->usb_switch_ != nullptr) {
+    this->usb_switch_->publish_state(usb_state);
+  }
+  if (this->dc_switch_ != nullptr) {
+    this->dc_switch_->publish_state(dc_state);
+  }
+  if (this->ac_switch_ != nullptr) {
+    this->ac_switch_->publish_state(ac_state);
+  }
+  if (this->light_switch_ != nullptr) {
+    this->light_switch_->publish_state(light_state);
+  }
+  
   ESP_LOGD(TAG, "Battery: %.1f%%, Input: %dW, Output: %dW, USB: %d, DC: %d, AC: %d", 
            battery_percent, input_watts, output_watts, usb_state, dc_state, ac_state);
 }
