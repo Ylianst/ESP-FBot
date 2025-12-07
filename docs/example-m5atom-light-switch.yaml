@@ -58,6 +58,7 @@ binary_sensor:
       name: "DC Active"
     ac_active:
       name: "AC Inverter Active"
+      id: ac_active
       on_state:
         then:
           - if:
