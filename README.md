@@ -18,15 +18,16 @@ Basically, any power station that works with the "BrightEMS" application. You no
 - **Home Assistant Integration**: All sensors and controls automatically discovered in Home Assistant
 - **Auto-reconnect**: Handles BLE disconnections and automatically reconnects
 
-## Hardware Requirements
+## Requirements
 
-- I suggest the [M5Stack ATOM Light](https://shop.m5stack.com/products/atom-lite-esp32-development-kit) or the [M5StickC PLUS2 ESP32 Mini](https://shop.m5stack.com/products/m5stickc-plus2-esp32-mini-iot-development-kit) device, but most ESP32 devices (ESP32-WROOM, ESP32-DevKit, etc.) will do.
 - A compatible battery that makes use of the "BrightEMS" application. You do not need to pair the battery to WIFI.
+- You need [Home Assistant](https://www.home-assistant.io/) installed with the [ESP-Home](https://esphome.io/) add-in.
+- I suggest the [M5Stack ATOM Light](https://shop.m5stack.com/products/atom-lite-esp32-development-kit) or the [M5StickC PLUS2 ESP32 Mini](https://shop.m5stack.com/products/m5stickc-plus2-esp32-mini-iot-development-kit) device, but most ESP32 devices (ESP32-WROOM, ESP32-DevKit, etc.) will do.
 - The ESP32 device will need to be within range of the battery (typically 10-30 feet)
 
 ## Getting the MAC address
 
-Before you install this integration, you will need to get the Bluetooth LE MAC address of your battery. You need to search for a Bluetooth LE device that starts with the name "FOSSIBOT" and "POWER".
+You will need to get the Bluetooth LE MAC address of your battery. Search for a Bluetooth LE device that starts with the name "FOSSIBOT" and "POWER".
 
 - On Windows, use [BluetoothLEView](https://www.nirsoft.net/utils/bluetooth_low_energy_scanner.html)
 
@@ -34,8 +35,10 @@ The MAC address will look like "A1:B2:C3:D4:E5:F6".
 
 ## Installation
 
-1. Use the example configuration file `fbot-example.yaml` as a starting point.
-2. Update WiFi credentials and API encryption key.
+Assuming you have Home Assistant and ESP-Home installed and know how to use it.
+
+1. Use the example configuration below as a starting point.
+2. Update WiFi credentials, API encryption key and Battery MAC address.
 3. Flash to your ESP32 device.
 
 ## Configuration
