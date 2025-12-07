@@ -89,10 +89,16 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   // Timing
   uint32_t polling_interval_{2000};
   uint32_t last_poll_time_{0};
+  uint32_t last_successful_poll_{0};
   
   // Connection state
   bool connected_{false};
   bool characteristics_discovered_{false};
+  
+  // Polling failure tracking
+  uint8_t consecutive_poll_failures_{0};
+  static const uint8_t MAX_POLL_FAILURES = 3;
+  static const uint32_t POLL_TIMEOUT_MS = 5000;  // 5 seconds timeout
   
   // Sensors
   sensor::Sensor *battery_percent_sensor_{nullptr};
@@ -125,7 +131,8 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   
   // State management
   void update_connected_state(bool state);
-  void publish_sensors();
+  void reset_sensors_to_unknown();
+  void check_poll_timeout();
 };
 
 }  // namespace fbot

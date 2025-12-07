@@ -15,12 +15,23 @@ void Fbot::setup() {
   this->notify_handle_ = 0;
   this->connected_ = false;
   this->characteristics_discovered_ = false;
+  this->consecutive_poll_failures_ = 0;
+  this->last_successful_poll_ = 0;
+  
+  // Initialize connected sensor to disconnected state
+  if (this->connected_binary_sensor_ != nullptr) {
+    this->connected_binary_sensor_->publish_state(false);
+  }
 }
 
 void Fbot::loop() {
   // Poll for data if connected
   if (this->connected_ && this->characteristics_discovered_) {
     uint32_t now = millis();
+    
+    // Check for poll timeout
+    this->check_poll_timeout();
+    
     if (now - this->last_poll_time_ >= this->polling_interval_) {
       this->send_read_request();
       this->last_poll_time_ = now;
@@ -51,6 +62,8 @@ void Fbot::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_i
       if (param->open.status == ESP_GATT_OK) {
         ESP_LOGI(TAG, "Connected to Fbot");
         this->connected_ = true;
+        this->consecutive_poll_failures_ = 0;
+        this->last_successful_poll_ = 0;
         this->update_connected_state(true);
       } else {
         ESP_LOGW(TAG, "Connection failed, status=%d", param->open.status);
@@ -225,6 +238,10 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
     return;
   }
   
+  // Successful poll received - reset failure counter
+  this->consecutive_poll_failures_ = 0;
+  this->last_successful_poll_ = millis();
+  
   // Parse key registers
   float battery_percent = this->get_register(data, length, 56) / 10.0f;
   uint16_t input_watts = this->get_register(data, length, 3);
@@ -313,6 +330,71 @@ void Fbot::control_ac(bool state) {
 
 void Fbot::control_light(bool state) {
   this->send_control_command(REG_LIGHT_CONTROL, state ? 1 : 0);
+}
+
+void Fbot::check_poll_timeout() {
+  // Only check timeout if we've started polling and are connected
+  if (this->last_poll_time_ == 0 || !this->connected_ || !this->characteristics_discovered_) {
+    return;
+  }
+  
+  uint32_t now = millis();
+  uint32_t time_since_last_poll = now - this->last_poll_time_;
+  uint32_t time_since_success = (this->last_successful_poll_ > 0) ? (now - this->last_successful_poll_) : 0;
+  
+  // Check if we've exceeded the timeout period since last successful poll
+  if (this->last_successful_poll_ > 0 && time_since_success > POLL_TIMEOUT_MS) {
+    // Increment failure counter
+    this->consecutive_poll_failures_++;
+    
+    ESP_LOGW(TAG, "Poll timeout detected (failure %d/%d)", this->consecutive_poll_failures_, MAX_POLL_FAILURES);
+    
+    // Reset the last_successful_poll to prevent repeated increments
+    this->last_successful_poll_ = now;
+    
+    // Check if we've reached the maximum failures
+    if (this->consecutive_poll_failures_ >= MAX_POLL_FAILURES) {
+      ESP_LOGE(TAG, "Max poll failures reached - marking as disconnected and resetting sensors");
+      this->reset_sensors_to_unknown();
+      this->update_connected_state(false);
+    }
+  }
+}
+
+void Fbot::reset_sensors_to_unknown() {
+  // Reset all sensor values to unknown/unavailable
+  if (this->battery_percent_sensor_ != nullptr) {
+    this->battery_percent_sensor_->publish_state(NAN);
+  }
+  if (this->input_power_sensor_ != nullptr) {
+    this->input_power_sensor_->publish_state(NAN);
+  }
+  if (this->output_power_sensor_ != nullptr) {
+    this->output_power_sensor_->publish_state(NAN);
+  }
+  if (this->system_power_sensor_ != nullptr) {
+    this->system_power_sensor_->publish_state(NAN);
+  }
+  if (this->total_power_sensor_ != nullptr) {
+    this->total_power_sensor_->publish_state(NAN);
+  }
+  if (this->remaining_time_sensor_ != nullptr) {
+    this->remaining_time_sensor_->publish_state(NAN);
+  }
+  
+  // Reset binary sensors for output states to unknown
+  if (this->usb_active_binary_sensor_ != nullptr) {
+    this->usb_active_binary_sensor_->publish_state(false);
+  }
+  if (this->dc_active_binary_sensor_ != nullptr) {
+    this->dc_active_binary_sensor_->publish_state(false);
+  }
+  if (this->ac_active_binary_sensor_ != nullptr) {
+    this->ac_active_binary_sensor_->publish_state(false);
+  }
+  if (this->light_active_binary_sensor_ != nullptr) {
+    this->light_active_binary_sensor_->publish_state(false);
+  }
 }
 
 }  // namespace fbot
