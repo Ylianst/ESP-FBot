@@ -174,3 +174,7 @@ switch:
 ```
 
 </details>
+
+## Battery Factory Reset
+
+If this integration works for you and want to remove your battery WIFI connection to the cloud, you can do a factory reset of the battery. Press and hold the `DC button`, `light button` and `USB button` simultaneously for about 5 seconds. You will hear a beep.
