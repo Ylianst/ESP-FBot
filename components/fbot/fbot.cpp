@@ -413,37 +413,43 @@ void Fbot::reset_sensors_to_unknown() {
 }
 
 void Fbot::update_switches_availability(bool available) {
-  // Update availability for all switches
+  ESP_LOGI(TAG, "update_switches_availability called with: %s", available ? "available" : "unavailable");
+  
+  // Update availability for all switches using internal state
   if (this->usb_switch_ != nullptr) {
+    ESP_LOGD(TAG, "Setting USB switch to %s", available ? "available" : "unavailable");
     if (available) {
-      this->usb_switch_->set_disabled_by_default(false);
+      this->usb_switch_->set_internal(false);
     } else {
-      this->usb_switch_->set_disabled_by_default(true);
+      this->usb_switch_->set_internal(true);
     }
   }
   if (this->dc_switch_ != nullptr) {
+    ESP_LOGD(TAG, "Setting DC switch to %s", available ? "available" : "unavailable");
     if (available) {
-      this->dc_switch_->set_disabled_by_default(false);
+      this->dc_switch_->set_internal(false);
     } else {
-      this->dc_switch_->set_disabled_by_default(true);
+      this->dc_switch_->set_internal(true);
     }
   }
   if (this->ac_switch_ != nullptr) {
+    ESP_LOGD(TAG, "Setting AC switch to %s", available ? "available" : "unavailable");
     if (available) {
-      this->ac_switch_->set_disabled_by_default(false);
+      this->ac_switch_->set_internal(false);
     } else {
-      this->ac_switch_->set_disabled_by_default(true);
+      this->ac_switch_->set_internal(true);
     }
   }
   if (this->light_switch_ != nullptr) {
+    ESP_LOGD(TAG, "Setting Light switch to %s", available ? "available" : "unavailable");
     if (available) {
-      this->light_switch_->set_disabled_by_default(false);
+      this->light_switch_->set_internal(false);
     } else {
-      this->light_switch_->set_disabled_by_default(true);
+      this->light_switch_->set_internal(true);
     }
   }
   
-  ESP_LOGD(TAG, "Switches availability updated: %s", available ? "available" : "unavailable");
+  ESP_LOGI(TAG, "Switches availability updated: %s", available ? "available" : "unavailable");
 }
 
 }  // namespace fbot
