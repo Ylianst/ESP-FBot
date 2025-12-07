@@ -43,16 +43,9 @@ external_components:
   - source: github://ylianst/esp-fbot
     refresh: 10s
 
-# Enable BLE scanning
-esp32_ble_tracker:
-  scan_parameters:
-    interval: 1100ms
-    window: 1100ms
-    active: true
-
 # BLE Client configuration
 ble_client:
-  - mac_address: "AA:BB:CC:DD:EE:FF"  # Replace with your Fbot MAC address
+  - mac_address: "AA:BB:CC:DD:EE:FF"  # Replace with your battery Bluetooth LE MAC address
     id: fbot_ble_client
 
 # Configure the Fbot component

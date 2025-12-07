@@ -200,8 +200,8 @@ void Fbot::send_control_command(uint16_t reg, uint16_t value) {
     ESP_LOGW(TAG, "Error sending control command, status=%d", status);
   } else {
     ESP_LOGI(TAG, "Sent control command: reg=%d, value=%d", reg, value);
-    // Request immediate update after 200ms
-    this->last_poll_time_ = millis() - this->polling_interval_ + 200;
+    // Request update after full polling interval (2000ms) to allow inverter to stabilize
+    this->last_poll_time_ = millis();
   }
 }
 
