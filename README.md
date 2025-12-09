@@ -7,7 +7,7 @@ This is a HomeAssistant, ESP-Home custom component for locally monitoring and co
  - [FOSSiBOT F3600 Pro](https://www.fossibot.com/products/fossibot-f3600-pro), [FOSSiBOT F2400](https://www.fossibot.com/products/fossibot-f2400)
  - [SYDPOWER N052](https://www.sydpower.com/product/n052?id=665461cb8b0da4a4e43e4609), [SYDPOWER N066](https://www.sydpower.com/product/detail?id=665462e4a7c432936b1b583d)
  - [AFERIY P210](https://www.aferiy.com/products/aferiy-p210-portable-power-station-2400w-2048wh), [AFERIY P310](https://www.aferiy.com/products/aferiy-p310-portable-power-station-3300w-3840wh)
- - [ABOK Power Ark3600](https://abokpower.com/all-products/portable-power-station-3600/)
+ - [ABOK Power Ark3600](https://abokpower.com/all-products/portable-power-station-3600/) (Probalby works, but not tested)
  
 Basically, any power station that works with the "BrightEMS" application. You normally manage these batteries thru a cloud service, which is not ideal in outage situations. Instead, you can get fast local management by loading this ESP-Home component on a small device near the battery. The device will communicate to the battery using Bluetooth and relay the data locally using WIFI to Home Assistant.
 
