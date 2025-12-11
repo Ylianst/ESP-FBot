@@ -50,6 +50,8 @@ void Fbot::dump_config() {
   LOG_SENSOR("  ", "System Power", this->system_power_sensor_);
   LOG_SENSOR("  ", "Total Power", this->total_power_sensor_);
   LOG_SENSOR("  ", "Remaining Time", this->remaining_time_sensor_);
+  LOG_SENSOR("  ", "Charge Threshold", this->threshold_charge_sensor_);
+  LOG_SENSOR("  ", "Discharge Threshold", this->threshold_discharge_sensor_);
   LOG_BINARY_SENSOR("  ", "Connected", this->connected_binary_sensor_);
   LOG_BINARY_SENSOR("  ", "Battery S1 Connected", this->battery_connected_s1_binary_sensor_);
   LOG_BINARY_SENSOR("  ", "Battery S2 Connected", this->battery_connected_s2_binary_sensor_);
@@ -270,7 +272,11 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   uint16_t total_watts = this->get_register(data, length, 20);
   uint16_t remaining_minutes = this->get_register(data, length, 59);
   uint16_t state_flags = this->get_register(data, length, 41);
-  
+
+  // Parse threshold registers (values are in permille, divide by 10 for percentage)
+  float threshold_discharge = this->get_register(data, length, 66) / 10.0f;
+  float threshold_charge = this->get_register(data, length, 67) / 10.0f;
+
   // Publish sensor values
   if (this->battery_percent_sensor_ != nullptr) {
     this->battery_percent_sensor_->publish_state(battery_percent);
@@ -296,7 +302,13 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   if (this->remaining_time_sensor_ != nullptr) {
     this->remaining_time_sensor_->publish_state(remaining_minutes);
   }
-  
+  if (this->threshold_charge_sensor_ != nullptr) {
+    this->threshold_charge_sensor_->publish_state(threshold_charge);
+  }
+  if (this->threshold_discharge_sensor_ != nullptr) {
+    this->threshold_discharge_sensor_->publish_state(threshold_discharge);
+  }
+
   // Update binary sensors for battery connection status
   if (this->battery_connected_s1_binary_sensor_ != nullptr) {
     this->battery_connected_s1_binary_sensor_->publish_state(battery_s1_connected);
@@ -365,6 +377,18 @@ void Fbot::control_ac(bool state) {
 
 void Fbot::control_light(bool state) {
   this->send_control_command(REG_LIGHT_CONTROL, state ? 1 : 0);
+}
+
+void Fbot::set_threshold_charge(float percent) {
+  // Convert percentage to permille (multiply by 10)
+  uint16_t value = static_cast<uint16_t>(percent * 10);
+  this->send_control_command(REG_THRESHOLD_CHARGE, value);
+}
+
+void Fbot::set_threshold_discharge(float percent) {
+  // Convert percentage to permille (multiply by 10)
+  uint16_t value = static_cast<uint16_t>(percent * 10);
+  this->send_control_command(REG_THRESHOLD_DISCHARGE, value);
 }
 
 void Fbot::check_poll_timeout() {

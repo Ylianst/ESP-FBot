@@ -25,6 +25,8 @@ CONF_TOTAL_POWER = "total_power"
 CONF_REMAINING_TIME = "remaining_time"
 CONF_BATTERY_S1_LEVEL = "battery_s1_level"
 CONF_BATTERY_S2_LEVEL = "battery_s2_level"
+CONF_THRESHOLD_CHARGE = "threshold_charge"
+CONF_THRESHOLD_DISCHARGE = "threshold_discharge"
 
 CONFIG_SCHEMA = cv.Schema(
     {
@@ -77,6 +79,16 @@ CONFIG_SCHEMA = cv.Schema(
             device_class=DEVICE_CLASS_DURATION,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
+        cv.Optional(CONF_THRESHOLD_CHARGE): sensor.sensor_schema(
+            unit_of_measurement=UNIT_PERCENT,
+            accuracy_decimals=0,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_THRESHOLD_DISCHARGE): sensor.sensor_schema(
+            unit_of_measurement=UNIT_PERCENT,
+            accuracy_decimals=0,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
     }
 )
 
@@ -114,3 +126,11 @@ async def to_code(config):
     if CONF_REMAINING_TIME in config:
         sens = await sensor.new_sensor(config[CONF_REMAINING_TIME])
         cg.add(parent.set_remaining_time_sensor(sens))
+
+    if CONF_THRESHOLD_CHARGE in config:
+        sens = await sensor.new_sensor(config[CONF_THRESHOLD_CHARGE])
+        cg.add(parent.set_threshold_charge_sensor(sens))
+
+    if CONF_THRESHOLD_DISCHARGE in config:
+        sens = await sensor.new_sensor(config[CONF_THRESHOLD_DISCHARGE])
+        cg.add(parent.set_threshold_discharge_sensor(sens))
