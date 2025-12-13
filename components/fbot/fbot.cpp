@@ -15,8 +15,10 @@ void Fbot::setup() {
   this->notify_handle_ = 0;
   this->connected_ = false;
   this->characteristics_discovered_ = false;
+  this->settings_received_ = false;
   this->consecutive_poll_failures_ = 0;
   this->last_successful_poll_ = 0;
+  this->last_settings_request_time_ = 0;
   
   // Initialize connected sensor to disconnected state
   if (this->connected_binary_sensor_ != nullptr) {
@@ -32,9 +34,16 @@ void Fbot::loop() {
     // Check for poll timeout
     this->check_poll_timeout();
     
+    // Send regular status request
     if (now - this->last_poll_time_ >= this->polling_interval_) {
       this->send_read_request();
       this->last_poll_time_ = now;
+    }
+    
+    // Send settings request periodically (every 60 seconds)
+    if (now - this->last_settings_request_time_ >= SETTINGS_REQUEST_INTERVAL) {
+      this->send_settings_request();
+      this->last_settings_request_time_ = now;
     }
   }
 }
@@ -128,9 +137,13 @@ void Fbot::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_i
     case ESP_GATTC_REG_FOR_NOTIFY_EVT: {
       if (param->reg_for_notify.status == ESP_GATT_OK) {
         ESP_LOGD(TAG, "Notification registration successful");
-        // Start polling
-        this->last_poll_time_ = millis();
+        // Start polling - request both status and settings on initial connection
+        uint32_t now = millis();
+        this->last_poll_time_ = now;
+        this->last_settings_request_time_ = now;
         this->send_read_request();
+        // Request settings shortly after first status request
+        this->set_timeout(500, [this]() { this->send_settings_request(); });
       }
       break;
     }
@@ -202,6 +215,30 @@ void Fbot::send_read_request() {
   }
 }
 
+void Fbot::send_settings_request() {
+  if (!this->connected_ || !this->characteristics_discovered_) {
+    return;
+  }
+  
+  // Read 80 holding registers starting from 0: [0x11, 0x03, 0x00, 0x00, 0x00, 0x50]
+  // Function code 0x03 = Read Holding Registers (settings)
+  uint8_t payload[6] = {0x11, 0x03, 0x00, 0x00, 0x00, 0x50};
+  uint16_t crc = this->calculate_checksum(payload, 6);
+  uint8_t command[8];
+  memcpy(command, payload, 6);
+  command[6] = (crc >> 8) & 0xFF;
+  command[7] = crc & 0xFF;
+  
+  auto status = esp_ble_gattc_write_char(this->parent()->get_gattc_if(), this->parent()->get_conn_id(),
+                                         this->write_handle_, sizeof(command), command,
+                                         ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
+  if (status) {
+    ESP_LOGW(TAG, "Error sending settings request, status=%d", status);
+  } else {
+    ESP_LOGD(TAG, "Sent settings request");
+  }
+}
+
 void Fbot::send_control_command(uint16_t reg, uint16_t value) {
   if (!this->connected_ || !this->characteristics_discovered_) {
     ESP_LOGW(TAG, "Cannot send command: not connected");
@@ -243,9 +280,22 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   this->consecutive_poll_failures_ = 0;
   this->last_successful_poll_ = millis();
   
-  // Check if this is a status message
-  if (data[0] != 0x11 || data[1] != 0x04) {
-    ESP_LOGVV(TAG, "Skipping non-status notification");
+  // Check header byte to determine notification type
+  if (data[0] != 0x11) {
+    ESP_LOGVV(TAG, "Invalid header byte: 0x%02x", data[0]);
+    return;
+  }
+  
+  // Route based on function code
+  if (data[1] == 0x03) {
+    // 0x03 = Read Holding Registers response (settings)
+    this->parse_settings_notification(data, length);
+    return;
+  } else if (data[1] == 0x04) {
+    // 0x04 = Read Input Registers response (status)
+    // Continue with status parsing below
+  } else {
+    ESP_LOGVV(TAG, "Unknown function code: 0x%02x", data[1]);
     return;
   }
   
@@ -273,10 +323,6 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   uint16_t remaining_minutes = this->get_register(data, length, 59);
   uint16_t state_flags = this->get_register(data, length, 41);
 
-  // Parse threshold registers (values are in permille, divide by 10 for percentage)
-  float threshold_discharge = this->get_register(data, length, 66) / 10.0f;
-  float threshold_charge = this->get_register(data, length, 67) / 10.0f;
-
   // Publish sensor values
   if (this->battery_percent_sensor_ != nullptr) {
     this->battery_percent_sensor_->publish_state(battery_percent);
@@ -301,12 +347,6 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   }
   if (this->remaining_time_sensor_ != nullptr) {
     this->remaining_time_sensor_->publish_state(remaining_minutes);
-  }
-  if (this->threshold_charge_sensor_ != nullptr) {
-    this->threshold_charge_sensor_->publish_state(threshold_charge);
-  }
-  if (this->threshold_discharge_sensor_ != nullptr) {
-    this->threshold_discharge_sensor_->publish_state(threshold_discharge);
   }
 
   // Update binary sensors for battery connection status
@@ -353,6 +393,33 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   ESP_LOGD(TAG, "Battery: %.1f%% S1:%.1f%%(con:%d) S2:%.1f%%(con:%d), Input: %dW, Output: %dW, USB: %d, DC: %d, AC: %d", 
            battery_percent, battery_percent_s1, battery_s1_connected, battery_percent_s2, battery_s2_connected, 
            input_watts, output_watts, usb_state, dc_state, ac_state);
+}
+
+void Fbot::parse_settings_notification(const uint8_t *data, uint16_t length) {
+  // Parse holding registers (settings) from 0x1103 response
+  ESP_LOGD(TAG, "Received settings notification");
+  
+  // Mark that we've received settings at least once
+  if (!this->settings_received_) {
+    this->settings_received_ = true;
+    ESP_LOGI(TAG, "First settings response received");
+  }
+  
+  // Parse threshold registers (66 and 67 from holding registers)
+  // Values are in permille (divide by 10 for percentage)
+  float threshold_discharge = this->get_register(data, length, REG_THRESHOLD_DISCHARGE) / 10.0f;
+  float threshold_charge = this->get_register(data, length, REG_THRESHOLD_CHARGE) / 10.0f;
+  
+  // Publish threshold sensor values
+  if (this->threshold_discharge_sensor_ != nullptr) {
+    this->threshold_discharge_sensor_->publish_state(threshold_discharge);
+  }
+  if (this->threshold_charge_sensor_ != nullptr) {
+    this->threshold_charge_sensor_->publish_state(threshold_charge);
+  }
+  
+  ESP_LOGD(TAG, "Settings: Discharge threshold: %.1f%%, Charge threshold: %.1f%%", 
+           threshold_discharge, threshold_charge);
 }
 
 void Fbot::update_connected_state(bool state) {

@@ -109,10 +109,13 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   uint32_t polling_interval_{2000};
   uint32_t last_poll_time_{0};
   uint32_t last_successful_poll_{0};
+  uint32_t last_settings_request_time_{0};
+  static const uint32_t SETTINGS_REQUEST_INTERVAL = 60000;  // Request settings every 60 seconds
   
   // Connection state
   bool connected_{false};
   bool characteristics_discovered_{false};
+  bool settings_received_{false};
   
   // Polling failure tracking
   uint8_t consecutive_poll_failures_{0};
@@ -150,8 +153,10 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   uint16_t calculate_checksum(const uint8_t *data, size_t len);
   void generate_command_bytes(uint8_t address, uint16_t reg, uint16_t value, uint8_t *output);
   void send_read_request();
+  void send_settings_request();
   void send_control_command(uint16_t reg, uint16_t value);
   void parse_notification(const uint8_t *data, uint16_t length);
+  void parse_settings_notification(const uint8_t *data, uint16_t length);
   uint16_t get_register(const uint8_t *data, uint16_t length, uint16_t reg_index);
   
   // State management
