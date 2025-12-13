@@ -27,6 +27,7 @@ CONF_BATTERY_S1_LEVEL = "battery_s1_level"
 CONF_BATTERY_S2_LEVEL = "battery_s2_level"
 CONF_THRESHOLD_CHARGE = "threshold_charge"
 CONF_THRESHOLD_DISCHARGE = "threshold_discharge"
+CONF_CHARGE_LEVEL = "charge_level"
 
 CONFIG_SCHEMA = cv.Schema(
     {
@@ -89,6 +90,12 @@ CONFIG_SCHEMA = cv.Schema(
             accuracy_decimals=0,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
+        cv.Optional(CONF_CHARGE_LEVEL): sensor.sensor_schema(
+            unit_of_measurement=UNIT_WATT,
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_POWER,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
     }
 )
 
@@ -134,3 +141,7 @@ async def to_code(config):
     if CONF_THRESHOLD_DISCHARGE in config:
         sens = await sensor.new_sensor(config[CONF_THRESHOLD_DISCHARGE])
         cg.add(parent.set_threshold_discharge_sensor(sens))
+
+    if CONF_CHARGE_LEVEL in config:
+        sens = await sensor.new_sensor(config[CONF_CHARGE_LEVEL])
+        cg.add(parent.set_charge_level_sensor(sens))

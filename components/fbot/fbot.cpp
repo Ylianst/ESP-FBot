@@ -62,6 +62,7 @@ void Fbot::dump_config() {
   LOG_SENSOR("  ", "Remaining Time", this->remaining_time_sensor_);
   LOG_SENSOR("  ", "Charge Threshold", this->threshold_charge_sensor_);
   LOG_SENSOR("  ", "Discharge Threshold", this->threshold_discharge_sensor_);
+  LOG_SENSOR("  ", "Charge Level", this->charge_level_sensor_);
   LOG_BINARY_SENSOR("  ", "Connected", this->connected_binary_sensor_);
   LOG_BINARY_SENSOR("  ", "Battery S1 Connected", this->battery_connected_s1_binary_sensor_);
   LOG_BINARY_SENSOR("  ", "Battery S2 Connected", this->battery_connected_s2_binary_sensor_);
@@ -306,6 +307,13 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   float battery_percent_s1 = this->get_register(data, length, 53) / 10.0f - 1.0f;
   float battery_percent_s2 = this->get_register(data, length, 55) / 10.0f - 1.0f;
   
+  // Charge level: register 2, values 1-5 map to 300W-1100W (increment by 200W)
+  uint16_t charge_level_raw = this->get_register(data, length, 2);
+  uint16_t charge_level_watts = 0;
+  if (charge_level_raw >= 1 && charge_level_raw <= 5) {
+    charge_level_watts = 300 + ((charge_level_raw - 1) * 200);
+  }
+  
   // Determine if extra batteries are connected (raw value of 0 means disconnected)
   bool battery_s1_connected = this->get_register(data, length, 53) > 0;
   bool battery_s2_connected = this->get_register(data, length, 55) > 0;
@@ -348,6 +356,9 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   }
   if (this->remaining_time_sensor_ != nullptr) {
     this->remaining_time_sensor_->publish_state(remaining_minutes);
+  }
+  if (this->charge_level_sensor_ != nullptr) {
+    this->charge_level_sensor_->publish_state(charge_level_watts);
   }
 
   // Update binary sensors for battery connection status
@@ -535,6 +546,9 @@ void Fbot::reset_sensors_to_unknown() {
   }
   if (this->remaining_time_sensor_ != nullptr) {
     this->remaining_time_sensor_->publish_state(NAN);
+  }
+  if (this->charge_level_sensor_ != nullptr) {
+    this->charge_level_sensor_->publish_state(NAN);
   }
   
   // Reset binary sensors for output states to unknown

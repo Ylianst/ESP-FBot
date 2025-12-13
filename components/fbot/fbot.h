@@ -59,6 +59,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   void set_remaining_time_sensor(sensor::Sensor *sensor) { this->remaining_time_sensor_ = sensor; }
   void set_threshold_charge_sensor(sensor::Sensor *sensor) { this->threshold_charge_sensor_ = sensor; }
   void set_threshold_discharge_sensor(sensor::Sensor *sensor) { this->threshold_discharge_sensor_ = sensor; }
+  void set_charge_level_sensor(sensor::Sensor *sensor) { this->charge_level_sensor_ = sensor; }
   
   // Binary sensor setters
   void set_connected_binary_sensor(binary_sensor::BinarySensor *sensor) { 
@@ -139,6 +140,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   sensor::Sensor *remaining_time_sensor_{nullptr};
   sensor::Sensor *threshold_charge_sensor_{nullptr};
   sensor::Sensor *threshold_discharge_sensor_{nullptr};
+  sensor::Sensor *charge_level_sensor_{nullptr};
   
   // Binary sensors
   binary_sensor::BinarySensor *connected_binary_sensor_{nullptr};

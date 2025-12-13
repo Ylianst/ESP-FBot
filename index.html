@@ -1,0 +1,3166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fossibot Control</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            --bg-body: #111827;
+            --bg-card: #1f2937;
+            --bg-log: #000000;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-green: #4ade80;
+            --text-blue: #60a5fa;
+            --text-red: #ef4444;
+            --btn-blue: #2563eb;
+            --btn-blue-hover: #1d4ed8;
+            --btn-red: #dc2626;
+            --btn-red-hover: #b91c1c;
+            --btn-green: #16a34a;
+            --font-main: system-ui, -apple-system, sans-serif;
+            --border-radius: 1rem;
+        }
+
+        /* Standard Themes */
+        [data-theme="minimal"] {
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-log: #1f2937;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --text-green: #059669;
+            --text-blue: #2563eb;
+            --text-red: #dc2626;
+            --btn-blue: #3b82f6;
+            --btn-blue-hover: #2563eb;
+            --btn-red: #ef4444;
+            --btn-red-hover: #dc2626;
+            --btn-green: #10b981;
+        }
+
+        [data-theme="industrial"] {
+            --bg-body: #292524;
+            --bg-card: #44403c;
+            --bg-log: #0c0a09;
+            --text-main: #e7e5e4;
+            --text-muted: #a8a29e;
+            --text-green: #facc15;
+            --text-blue: #38bdf8;
+            --text-red: #f87171;
+            --btn-blue: #0ea5e9;
+            --btn-blue-hover: #0284c7;
+            --btn-red: #ef4444;
+            --btn-red-hover: #dc2626;
+            --btn-green: #ca8a04;
+        }
+
+        [data-theme="rainbow"] {
+            --bg-body: #2d0036;
+            --bg-card: #4a0e5c;
+            --bg-log: #1a0524;
+            --text-main: #ffffff;
+            --text-muted: #e0b0ff;
+            --text-green: #00ff00;
+            --text-blue: #00ffff;
+            --text-red: #ff0000;
+            --btn-blue: #9400d3;
+            --btn-blue-hover: #4b0082;
+            --btn-red: #ff0000;
+            --btn-red-hover: #8b0000;
+            --btn-green: #00ff00;
+        }
+
+        [data-theme="cyberpunk"] {
+            --bg-body: #0a0014;
+            --bg-card: #1a0a2e;
+            --bg-log: #05000a;
+            --text-main: #ff00ff;
+            --text-muted: #8b5cf6;
+            --text-green: #00ffff;
+            --text-blue: #ff00ff;
+            --text-red: #ff0055;
+            --btn-blue: #ff00ff;
+            --btn-blue-hover: #cc00cc;
+            --btn-red: #ff0055;
+            --btn-red-hover: #cc0044;
+            --btn-green: #00ffff;
+        }
+
+        [data-theme="ocean"] {
+            --bg-body: #0c1929;
+            --bg-card: #1e3a5f;
+            --bg-log: #051525;
+            --text-main: #e0f2fe;
+            --text-muted: #7dd3fc;
+            --text-green: #2dd4bf;
+            --text-blue: #38bdf8;
+            --text-red: #f472b6;
+            --btn-blue: #0284c7;
+            --btn-blue-hover: #0369a1;
+            --btn-red: #db2777;
+            --btn-red-hover: #be185d;
+            --btn-green: #14b8a6;
+        }
+
+        [data-theme="sunset"] {
+            --bg-body: #1c0a00;
+            --bg-card: #3d1500;
+            --bg-log: #0d0500;
+            --text-main: #fef3c7;
+            --text-muted: #fdba74;
+            --text-green: #fbbf24;
+            --text-blue: #fb923c;
+            --text-red: #ef4444;
+            --btn-blue: #ea580c;
+            --btn-blue-hover: #c2410c;
+            --btn-red: #dc2626;
+            --btn-red-hover: #b91c1c;
+            --btn-green: #d97706;
+        }
+
+        [data-theme="matrix"] {
+            --bg-body: #000000;
+            --bg-card: #001100;
+            --bg-log: #000500;
+            --text-main: #00ff00;
+            --text-muted: #008800;
+            --text-green: #00ff00;
+            --text-blue: #00cc00;
+            --text-red: #ff0000;
+            --btn-blue: #006600;
+            --btn-blue-hover: #004400;
+            --btn-red: #880000;
+            --btn-red-hover: #660000;
+            --btn-green: #00aa00;
+        }
+
+        /* PSYCHEDELIC THEME (ACID MODE) */
+        [data-theme="psychedelic"] {
+            --bg-body: #ff00ff;
+            --bg-card: #00ffff;
+            --bg-log: #ffff00;
+            --text-main: #000000;
+            --text-muted: #333333;
+            --text-green: #008000;
+            --text-blue: #0000ff;
+            --text-red: #ff0000;
+            --btn-blue: #ff0000;
+            --btn-blue-hover: #cc0000;
+            --btn-red: #00ff00;
+            --btn-red-hover: #00cc00;
+            --btn-green: #0000ff;
+        }
+
+        /* Acid Trip Animations */
+        @keyframes acid-bg {
+            0% {
+                background-color: #ff00ff;
+                filter: hue-rotate(0deg);
+            }
+
+            50% {
+                background-color: #00ffff;
+            }
+
+            100% {
+                background-color: #ffff00;
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        @keyframes wobble {
+
+            0%,
+            100% {
+                transform: skew(0deg) scale(1);
+            }
+
+            25% {
+                transform: skew(2deg) scale(1.02);
+            }
+
+            75% {
+                transform: skew(-2deg) scale(0.98);
+            }
+        }
+
+        @keyframes rainbow-text {
+            0% {
+                color: #ff0000;
+            }
+
+            20% {
+                color: #ffff00;
+            }
+
+            40% {
+                color: #00ff00;
+            }
+
+            60% {
+                color: #00ffff;
+            }
+
+            80% {
+                color: #0000ff;
+            }
+
+            100% {
+                color: #ff00ff;
+            }
+        }
+
+        @keyframes acid-border {
+            0% {
+                border-color: #ff0000;
+            }
+
+            50% {
+                border-color: #00ff00;
+            }
+
+            100% {
+                border-color: #0000ff;
+            }
+        }
+
+        [data-theme="psychedelic"] body {
+            animation: acid-bg 10s infinite linear;
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.2) 20px, rgba(255, 255, 255, 0.2) 40px);
+            background-attachment: fixed;
+            /* Apply the melt filter here */
+            filter: url(#meltFilter);
+            will-change: filter;
+        }
+
+        [data-theme="psychedelic"] .container {
+            animation: wobble 3s infinite ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        [data-theme="psychedelic"] .btn-main,
+        [data-theme="psychedelic"] .control-tile,
+        [data-theme="psychedelic"] .dashboard {
+            border: 2px solid transparent;
+            animation: acid-border 2s infinite linear;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.8);
+            /* Semi-transparent to see eyes */
+        }
+
+        [data-theme="psychedelic"] h1,
+        [data-theme="psychedelic"] .dash-val {
+            animation: rainbow-text 2s infinite linear;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        /* PSYCHEDELIC EYES */
+        .psy-eye-container {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 150px;
+            pointer-events: none;
+            z-index: 1;
+            /* Behind container but visible */
+            display: none;
+            justify-content: space-between;
+        }
+
+        [data-theme="psychedelic"] .psy-eye-container {
+            display: flex;
+        }
+
+        .psy-eye {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #fff, #f0f0f0);
+            border-radius: 50%;
+            border: 3px solid #000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Bloodshot veins */
+        .psy-eye::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 50%, rgba(255, 0, 0, 0.1) 60%, rgba(255, 0, 0, 0.5) 100%),
+                repeating-conic-gradient(transparent 0deg, transparent 10deg, rgba(255, 0, 0, 0.4) 10.5deg, transparent 11deg);
+            border-radius: 50%;
+        }
+
+        .psy-pupil {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 65%;
+            /* Big pupil */
+            height: 65%;
+            background: #000;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .psy-glint {
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            width: 15%;
+            height: 15%;
+            background: #fff;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        [data-theme="retro"] {
+            --bg-body: #dcbfa6;
+            --bg-card: #cfb997;
+            --bg-log: #3b3228;
+            --text-main: #3b3228;
+            --text-muted: #5c5346;
+            --text-green: #556b2f;
+            --text-blue: #4682b4;
+            --text-red: #8b4513;
+            --btn-blue: #4682b4;
+            --btn-blue-hover: #315a7d;
+            --btn-red: #cd5c5c;
+            --btn-red-hover: #8b3a3a;
+            --btn-green: #556b2f;
+        }
+
+        [data-theme="ocean"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-log: #020617;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-green: #2dd4bf;
+            --text-blue: #38bdf8;
+            --text-red: #f43f5e;
+            --btn-blue: #0ea5e9;
+            --btn-blue-hover: #0284c7;
+            --btn-red: #e11d48;
+            --btn-red-hover: #be123c;
+            --btn-green: #0d9488;
+        }
+
+        [data-theme="high-contrast"] {
+            --bg-body: #000000;
+            --bg-card: #000000;
+            --bg-log: #000000;
+            --text-main: #ffffff;
+            --text-muted: #ffffff;
+            --text-green: #ffff00;
+            --text-blue: #00ffff;
+            --text-red: #ff0000;
+            --btn-blue: #0000ff;
+            --btn-blue-hover: #00008b;
+            --btn-red: #ff0000;
+            --btn-red-hover: #8b0000;
+            --btn-green: #008000;
+        }
+
+        [data-theme="pipboy"] {
+            --bg-body: #000000;
+            --bg-card: #0a2e0a;
+            --bg-log: #000000;
+            --text-main: #0cfc0c;
+            --text-muted: #0a8c0a;
+            --text-green: #0cfc0c;
+            --text-blue: #0cfc0c;
+            --text-red: #0a8c0a;
+            --btn-blue: #0a6e0a;
+            --btn-blue-hover: #084e08;
+            --btn-red: #0a3e0a;
+            --btn-red-hover: #082e08;
+            --btn-green: #0a8c0a;
+            --font-main: 'Courier New', Courier, monospace;
+        }
+
+        /* TERMINAL Theme */
+        [data-theme="terminal"] {
+            --bg-body: #000000;
+            --bg-card: #000000;
+            --bg-log: #000000;
+            --text-main: #00ff00;
+            --text-muted: #008800;
+            --text-green: #00ff00;
+            --text-blue: #00ff00;
+            --text-red: #ff0000;
+            --btn-blue: #000000;
+            --btn-blue-hover: #002200;
+            --btn-red: #000000;
+            --btn-red-hover: #220000;
+            --btn-green: #000000;
+            --font-main: 'Courier New', Courier, monospace;
+            --border-radius: 0;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-card);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.75rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+        }
+
+        [data-theme="terminal"] .bottom-nav {
+            background: #000;
+            border-top: 1px solid #00ff00;
+        }
+
+        .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--text-blue);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme="terminal"] .nav-item.active {
+            color: #00ff00;
+            background: #002200;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* Views */
+        .view-section {
+            display: none;
+            width: 100%;
+            max-width: 28rem;
+            padding-bottom: 6rem;
+            /* Space for nav */
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .view-section.active {
+            display: flex;
+        }
+
+        /* Settings Form */
+        .setting-group {
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .setting-header {
+            color: var(--text-blue);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid var(--text-muted);
+        }
+
+        [data-theme="terminal"] .setting-header {
+            color: #00ff00;
+            border-bottom: 1px dashed #00ff00;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.75rem;
+            gap: 1rem;
+        }
+
+        [data-theme="terminal"] .setting-row {
+            background: transparent;
+            border: 1px solid #008800;
+            border-radius: 0;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-title {
+            font-weight: bold;
+            display: block;
+        }
+
+        .setting-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .setting-control {
+            flex: 0 0 auto;
+        }
+
+        /* Toggles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #374151;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--btn-green);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Inputs */
+        .setting-select,
+        .setting-input {
+            background: var(--bg-body);
+            color: var(--text-main);
+            border: 1px solid var(--text-muted);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            width: 140px;
+            /* Standardized Width */
+            box-sizing: border-box;
+        }
+
+        [data-theme="terminal"] .setting-select,
+        [data-theme="terminal"] .setting-input {
+            background: #000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 28rem;
+            transition: max-width 0.3s;
+        }
+
+        /* Standard Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 28rem;
+        }
+
+        /* Terminal Header Elements */
+        .terminal-window-bar {
+            display: none;
+        }
+
+        .terminal-prompt {
+            display: none;
+        }
+
+        [data-theme="terminal"] .header {
+            display: none;
+        }
+
+        [data-theme="terminal"] .terminal-window-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 28rem;
+            background: #00ff00;
+            color: #000;
+            padding: 0.25rem 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            box-sizing: border-box;
+        }
+
+        [data-theme="terminal"] .terminal-prompt {
+            display: flex;
+            align-items: center;
+            color: #00ff00;
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 28rem;
+        }
+
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            outline: none;
+            flex: 1;
+            margin-left: 0.5rem;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-main {
+            flex: 1;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 700;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .btn-connect {
+            background-color: var(--btn-blue);
+        }
+
+        .btn-disconnect {
+            background-color: var(--btn-red);
+        }
+
+        [data-theme="terminal"] .btn-main {
+            background: transparent;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            box-shadow: none;
+            text-transform: uppercase;
+        }
+
+        [data-theme="terminal"] .btn-main:hover {
+            background: #00ff00;
+            color: #000;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            background-color: var(--bg-card);
+            padding: 1rem;
+            /* Reduced padding */
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s;
+        }
+
+        [data-theme="terminal"] .dashboard {
+            border: 1px solid #00ff00;
+            box-shadow: none;
+            background: #000;
+        }
+
+        .dash-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            gap: 0.5rem;
+        }
+
+        .dash-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .dash-col.left {
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .dash-col.center {
+            align-items: center;
+            text-align: center;
+            flex: 0 0 auto;
+            min-width: 6rem;
+        }
+
+        .dash-col.right {
+            align-items: flex-end;
+            text-align: right;
+        }
+
+        .dash-val {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        /* Reduced font size */
+        .dash-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .battery-ring-container {
+            position: relative;
+            width: 6rem;
+            /* Fixed smaller width */
+            height: 6rem;
+            /* Fixed smaller height */
+            margin: 0.5rem auto;
+        }
+
+        .battery-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.25rem;
+            /* Reduced font size */
+            font-weight: bold;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .battery-unit {
+            font-size: 0.75rem;
+            margin-left: 1px;
+        }
+
+        [data-theme="terminal"] .dash-label {
+            color: #008800;
+        }
+
+        /* Controls */
+        .control-row {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .control-tile {
+            flex: 1;
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            color: var(--text-muted);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-tile svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .control-tile.active {
+            background-color: var(--btn-green);
+            color: white;
+        }
+
+        [data-theme="terminal"] .control-tile {
+            background: transparent;
+            border: 1px solid #008800;
+            color: #008800;
+            box-shadow: none;
+        }
+
+        [data-theme="terminal"] .control-tile.active {
+            background: #00ff00;
+            color: #000;
+            border-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        /* Log */
+        .log-box {
+            background-color: var(--bg-log);
+            color: var(--text-green);
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            height: 8rem;
+            overflow-y: auto;
+            border: 1px solid #374151;
+        }
+
+        [data-theme="terminal"] .log-box {
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            border-radius: 0;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            padding: 2rem 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        [data-theme="terminal"] select {
+            background: #000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Diagnostic Flash Animations */
+        @keyframes flash-green {
+            0% {
+                color: #0f0;
+                font-weight: bold;
+                transform: scale(1.1);
+            }
+
+            100% {
+                color: inherit;
+                font-weight: normal;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes flash-yellow {
+            0% {
+                color: #ff0;
+                font-weight: bold;
+                transform: scale(1.1);
+            }
+
+            100% {
+                color: inherit;
+                font-weight: normal;
+                transform: scale(1);
+            }
+        }
+
+        .flash-up {
+            animation: flash-green 1.5s ease-out;
+            display: inline-block;
+        }
+
+        .flash-down {
+            animation: flash-yellow 1.5s ease-out;
+            display: inline-block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Psychedelic Image Overlay */
+        #psyImage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90%;
+            max-height: 90%;
+            z-index: 9999;
+            pointer-events: none;
+            display: none;
+            border: 5px solid #fff;
+            box-shadow: 0 0 50px #fff;
+        }
+
+        /* Info Button & Modal */
+        .info-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 1.5rem;
+            pointer-events: auto;
+            /* Enable clicks even if parent is disabled */
+            height: 1.5rem;
+            border-radius: 50%;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 5;
+            transition: all 0.2s;
+        }
+
+        .info-btn:hover {
+            background: var(--text-muted);
+            color: var(--bg-card);
+        }
+
+        [data-theme="terminal"] .info-btn {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        /* Info button contrast on active tile */
+        .control-tile.active .info-btn {
+            border-color: var(--bg-card);
+            color: var(--bg-card);
+        }
+
+        [data-theme="terminal"] .control-tile.active .info-btn {
+            border-color: #000;
+            color: #000;
+        }
+
+        [data-theme="terminal"] .info-btn:hover {
+            background: #00ff00;
+            color: #000;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            max-width: 90%;
+            width: 400px;
+            color: var(--text-main);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        [data-theme="terminal"] .modal-content {
+            background: #000;
+            border: 1px solid #00ff00;
+            border-radius: 0;
+            color: #00ff00;
+            box-shadow: none;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        [data-theme="terminal"] .modal-close {
+            color: #00ff00;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--text-blue);
+        }
+
+        [data-theme="terminal"] .modal-title {
+            color: #00ff00;
+            text-transform: uppercase;
+            border-bottom: 1px dashed #00ff00;
+            padding-bottom: 0.5rem;
+        }
+
+        .install-prompt-container {
+            width: 100%;
+            display: none;
+            justify-content: center;
+            padding: 0.5rem 0;
+        }
+
+        .btn-install {
+            background: var(--btn-green);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        [data-theme="terminal"] .btn-install {
+            background: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            border-radius: 0;
+            text-transform: uppercase;
+        }
+
+        [data-theme="terminal"] .btn-install:hover {
+            background: #00ff00;
+            color: #000;
+        }
+
+        /* Settings Modal Specifics */
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .settings-label {
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        [data-theme="terminal"] .settings-label {
+            color: #00ff00;
+        }
+
+        .settings-input {
+            background: var(--bg-body);
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            width: 100px;
+            text-align: right;
+        }
+
+        [data-theme="terminal"] .settings-input {
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            border-radius: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Extension Battery Badges */
+        .ext-battery-info {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        [data-theme="terminal"] .ext-battery-info {
+            color: #008800;
+        }
+
+        .debug-console {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #0f0;
+            font-family: monospace;
+            z-index: 20000;
+            display: none;
+            border-top: 2px solid #fff;
+            padding: 1rem;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Watching Eyes for Psychedelic Theme -->
+    <div class="psy-eye-container">
+        <div class="psy-eye">
+            <div class="psy-pupil"></div>
+            <div class="psy-glint"></div>
+        </div>
+        <div class="psy-eye">
+            <div class="psy-pupil"></div>
+            <div class="psy-glint"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="view-control" class="view-section active">
+            <!-- Terminal Elements -->
+            <div class="terminal-window-bar">
+                <span>[ FOSSIBOT CONTROL ]</span>
+                <span style="display:flex; gap:0.5rem;">
+                    <button class="btn-main btn-connect" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                        Connect
+                    </button>
+                    <button id="btn-install-term" class="btn-main hidden" onclick="installApp()"
+                        style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                        INSTALL
+                    </button>
+                    <button class="btn-main btn-disconnect hidden" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                        Disconnect
+                    </button>
+                </span>
+            </div>
+
+            <!-- Standard Header -->
+            <div class="header">
+                <h1 style="margin:0; font-size: 1.5rem;">Fossibot</h1>
+                <div class="btn-group" style="width: auto; margin: 0;">
+                    <button class="btn-main btn-connect">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 7l10 10-5 5V2l5 5L7 17" />
+                        </svg>
+                        Connect
+                    </button>
+                    <button id="btn-install-ui" class="btn-main hidden" onclick="installApp()"
+                        style="background-color: var(--btn-green);">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Install App
+                    </button>
+                    <button class="btn-main btn-disconnect hidden">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Disconnect
+                    </button>
+                </div>
+            </div>
+
+            <div id="dashboard" class="dashboard disabled">
+                <div class="dash-row">
+                    <div class="dash-col left">
+                        <div class="dash-label">Input</div>
+                        <div class="dash-val text-green"><span id="inputWatts">--</span> <span
+                                style="font-size:0.75rem;">W</span></div>
+                    </div>
+
+                    <div class="dash-col center">
+                        <div class="dash-sub" style="margin-bottom: 0.25rem;">Sys: <span id="sysWatts">--</span>W</div>
+                        <div class="battery-ring-container">
+                            <svg width="100%" height="100%" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                                <path class="ring-bg"
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none" stroke="currentColor" stroke-width="3" />
+                                <path id="batteryRing" class="ring-val text-blue" stroke-dasharray="0, 100"
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none" stroke="currentColor" stroke-width="3" />
+                            </svg>
+                            <div class="battery-text"><span id="batteryPercent">--</span><span
+                                    class="battery-unit">%</span>
+                            </div>
+                        </div>
+                        <div class="dash-sub" style="margin-top: 0.25rem;">
+                            <div><span id="remainingHours">--</span> hrs</div>
+                            <div><span id="remainingKwh">--</span> kWh</div>
+                        </div>
+                        <div id="extBatteries" class="ext-battery-info"></div>
+                    </div>
+
+                    <div class="dash-col right">
+                        <div class="dash-label">Output</div>
+                        <div class="dash-val text-blue"><span id="outputWatts">--</span> <span
+                                style="font-size:0.75rem;">W</span></div>
+                        <div class="dash-sub">Tot: <span id="totalWatts">--</span>W</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="controls" class="control-row disabled">
+                <div id="btn-usb" class="control-tile" onclick="toggle('usb')" style="position: relative;">
+                    <div class="info-btn" onclick="showInfo(event, 'USB')">?</div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    <span>USB</span>
+                </div>
+                <div id="btn-ac" class="control-tile" onclick="toggle('ac')" style="position: relative;">
+                    <div class="info-btn" onclick="showInfo(event, 'AC')">?</div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M2 12h20"></path>
+                    </svg>
+                    <span>AC</span>
+                </div>
+                <div id="btn-dc" class="control-tile" onclick="toggle('dc')" style="position: relative;">
+                    <div class="info-btn" onclick="showInfo(event, 'DC')">?</div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+                        <line x1="6" y1="12" x2="6" y2="12"></line>
+                        <line x1="18" y1="12" x2="18" y2="12"></line>
+                    </svg>
+                    <span>DC</span>
+                </div>
+            </div>
+
+            <div class="log-container">
+                <div class="log-title">Activity Log</div>
+                <div id="log" class="log-box"></div>
+            </div>
+
+            <div class="terminal-prompt">
+                <span>guest@fossibot:~$</span>
+                <input type="text" id="termInput" class="terminal-input" autocomplete="off" spellcheck="false"
+                    onkeydown="handleTerminalCommand(event)">
+            </div>
+        </div>
+
+        <div id="view-settings" class="view-section">
+            <div class="header">
+                <h1>Settings</h1>
+            </div>
+
+            <div
+                style="background: rgba(255,165,0,0.2); border: 1px solid #ff9800; color: #ff9800; padding: 0.5rem; margin: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8rem; text-align: center;">
+                ⚠️ <strong>Work in Progress</strong> - Not all settings may function correctly.
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-header">Device Control</div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-title">AC Silent Charging</span>
+                        <span class="setting-desc">Quieter, slower charging</span>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="set-ac-silent" onchange="toggleSetting('ac_silent')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-title">LED Light</span>
+                        <span class="setting-desc">Toggle device light</span>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn-main" onclick="toggle('light')"
+                            style="width: auto; padding: 0.5rem 1rem;">Toggle</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-title text-red">Power Off</span>
+                        <span class="setting-desc">Shutdown Device</span>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn-main" style="background: var(--btn-red); width: 140px; padding: 0.5rem;"
+                            onclick="toggleSetting('power_off')">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-header">Power Limits</div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-title">AC Charging On/Off</span>
+                        <span class="setting-desc">Toggle AC input charging (Experimental)</span>
+                    </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="set-eps-toggle" onchange="toggleSetting('eps_toggle')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-title">AC Charging Upper Limit (EPS)</span>
+                        <span class="setting-desc">Max charge % <span id="status-eps" class="text-blue"></span></span>
+                    </div>
+                    <select class="setting-select" id="set-eps-limit" onchange="changeSelect('eps_limit')">
+                        <option value="1000">100%</option>
+                        <option value="900">90%</option>
+                        <option value="800">80%</option>
+                        <option value="700">70%</option>
+                        <option value="600">60%</option>
+                    </select>
+                </div>
+                <div class="setting-row" style="flex-direction: column; align-items: stretch;">
+                    <div style="display:flex; justify-content: space-between;">
+                        <div class="setting-info">
+                            <span class="setting-title">Discharge Limit</span>
+                            <span class="setting-desc">Stop discharging at %</span>
+                        </div>
+                        <span id="val-discharge-limit" class="text-blue">0%</span>
+                    </div>
+                    <input type="range" id="set-discharge-limit" min="0" max="1000" value="0"
+                        onchange="updateSlider('discharge_limit', this.value)"
+                        oninput="updateSliderLabel('discharge_limit', this.value)">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-header">Timers</div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-title">Screen Timeout</span>
+                        <span class="setting-desc"><span id="status-screen-timeout" class="text-blue"></span></span>
+                    </div>
+                    <select class="setting-select" id="set-screen-timeout" onchange="changeSelect('screen_timeout')">
+                        <option value="180">3 min</option>
+                        <option value="300">5 min</option>
+                        <option value="600">10 min</option>
+                        <option value="1800">30 min</option>
+                        <option value="0">Never</option>
+                    </select>
+                </div>
+            </div>
+            <div class="setting-row" style="flex-direction: column; align-items: stretch;">
+                <div class="setting-info">
+                    <span class="setting-title">Schedule Charge</span>
+                    <span class="setting-desc">Start charging at time (or enter minutes)</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; align-items: center;">
+                    <input type="time" class="setting-input" id="set-booking-time" style="flex: 1;"
+                        onchange="updateBookingFromTime()">
+                    <span>or</span>
+                    <input type="number" class="setting-input" id="set-booking-charge" value="0" min="0"
+                        onchange="changeInput('booking_charge')">
+                    <span>mins</span>
+                </div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">System Standby</span>
+                    <span class="setting-desc"><span id="status-sys-standby" class="text-blue"></span></span>
+                </div>
+                <select class="setting-select" id="set-sys-standby" onchange="changeSelect('sys_standby')">
+                    <option value="5">5 min</option>
+                    <option value="10">10 min</option>
+                    <option value="30">30 min</option>
+                    <option value="480">480 min (8h)</option>
+                    <!-- <option value="0">Never</option> -->
+                </select>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">AC Standby</span>
+                    <span class="setting-desc"><span id="status-ac-standby" class="text-blue"></span></span>
+                </div>
+                <select class="setting-select" id="set-ac-standby" onchange="changeSelect('ac_standby')">
+                    <option value="480">8 hr</option>
+                    <option value="960">16 hr</option>
+                    <option value="1440">24 hr</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">DC Standby</span>
+                    <span class="setting-desc"><span id="status-dc-standby" class="text-blue"></span></span>
+                </div>
+                <select class="setting-select" id="set-dc-standby" onchange="changeSelect('dc_standby')">
+                    <option value="480">8 hr</option>
+                    <option value="960">16 hr</option>
+                    <option value="1440">24 hr</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">USB Standby</span>
+                    <span class="setting-desc"><span id="status-usb-standby" class="text-blue"></span></span>
+                </div>
+                <select class="setting-select" id="set-usb-standby" onchange="changeSelect('usb_standby')">
+                    <option value="5">5 min</option>
+                    <option value="10">10 min</option>
+                    <option value="30">30 min</option>
+                    <option value="60">1 hr</option>
+                    <option value="120">2 hr</option>
+                    <option value="480">8 hr</option>
+                    <option value="600">10 hr</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-header">Theme</div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-title">App Theme</span>
+                        <span class="setting-desc">Visual Style</span>
+                    </div>
+                    <select class="setting-select" id="theme-select" onchange="setTheme(this.value)">
+                        <option value="pipboy">☢️ Pipboy (Default)</option>
+                        <option value="terminal">🖥️ Terminal</option>
+                        <option value="industrial">🏭 Industrial</option>
+                        <option value="cyberpunk">🌃 Cyberpunk</option>
+                        <option value="ocean">🌊 Ocean</option>
+                        <option value="sunset">🌅 Sunset</option>
+                        <option value="matrix">💊 Matrix</option>
+                        <option value="rainbow">🌈 Rainbow</option>
+                        <option value="psychedelic">😵 Acid Mode</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-simulation" class="view-section">
+        <div class="header">
+            <h1>Simulation</h1>
+            <p style="color: var(--text-muted); font-size: 0.8rem;">🚧 Coming Soon - Appliance power simulator</p>
+        </div>
+        <div class="setting-group">
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">Simulation State</span>
+                    <span class="setting-desc">Test dashboard without device</span>
+                </div>
+                <button onclick="activateDebug()" class="btn-main"
+                    style="width: auto; padding: 0.5rem; background: var(--btn-green);">Start Sim</button>
+            </div>
+        </div>
+        <div id="sim-controls" style="width:100%; display:none; padding:1rem;">
+            <div
+                style="background: rgba(0,0,0,0.5); padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--text-muted);">
+                <div
+                    style="display:flex; justify-content:space-between; margin-bottom:0.5rem; border-bottom:1px dashed #555;">
+                    <strong>Simulator State</strong>
+                    <button onclick="closeDebug()"
+                        style="color:red; background:none; border:none; cursor:pointer;">Stop</button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.7rem;">Battery %</label>
+                        <input type="number" id="sim-battery" value="50" min="0" max="100" onchange="updateSimulation()"
+                            style="width: 100%; padding: 0.25rem; background: #111; color: #0f0; border: 1px solid #0f0;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.7rem;">Input W</label>
+                        <input type="number" id="sim-input" value="0" min="0" onchange="updateSimulation()"
+                            style="width: 100%; padding: 0.25rem; background: #111; color: #0f0; border: 1px solid #0f0;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.7rem;">Output W</label>
+                        <input type="number" id="sim-output" value="0" min="0" onchange="updateSimulation()"
+                            style="width: 100%; padding: 0.25rem; background: #111; color: #0f0; border: 1px solid #0f0;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.7rem;">System W</label>
+                        <input type="number" id="sim-sys" value="0" min="0" onchange="updateSimulation()"
+                            style="width: 100%; padding: 0.25rem; background: #111; color: #0f0; border: 1px solid #0f0;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-diagnostics" class="view-section">
+        <div class="header"
+            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <h1>Diagnostics</h1>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn-connect" onclick="connect()"
+                    style="background: var(--btn-blue); color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">Connect</button>
+                <button class="btn-disconnect hidden" onclick="disconnect()"
+                    style="background: var(--btn-red); color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">Disconnect</button>
+                <button onclick="renderDiagnostics()"
+                    style="background: var(--btn-green); color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">Refresh</button>
+                <button onclick="sendSettingsRequest()"
+                    style="background: #9333ea; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">📋
+                    Settings</button>
+                <label style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                    <input type="checkbox" id="diag-hide-zero" onchange="renderDiagnostics()"> Hide 0s
+                </label>
+                <label style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                    <input type="checkbox" id="diag-auto-refresh" onchange="toggleDiagAutoRefresh(this.checked)"> Auto
+                    <select id="diag-refresh-interval" onchange="updateDiagRefreshInterval()"
+                        style="padding: 0.1rem; font-size: 0.7rem;">
+                        <option value="1000">1s</option>
+                        <option value="2000" selected>2s</option>
+                        <option value="5000">5s</option>
+                        <option value="10000">10s</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div id="full-diag-list" style="padding:1rem; padding-bottom: 5rem; font-family: monospace;"></div>
+    </div>
+
+    <div id="scanner" class="hidden"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
+            <h2 style="margin: 0;">Register Scanner</h2>
+            <button onclick="toggleScanner()"
+                style="background: none; border: none; color: white; font-size: 1.5rem;">&times;</button>
+        </div>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <input id="scanStart" type="number" placeholder="Start Reg" value="0"
+                style="flex: 1; min-width: 80px; padding: 0.5rem; border-radius: 0.5rem; border: none;">
+            <input id="scanEnd" type="number" placeholder="End Reg" value="100"
+                style="flex: 1; min-width: 80px; padding: 0.5rem; border-radius: 0.5rem; border: none;">
+            <button onclick="scanRegisters()"
+                style="flex: 1; min-width: 100px; padding: 0.5rem 1rem; background: var(--btn-blue); color: white; border: none; border-radius: 0.5rem;">Scan
+                Range</button>
+        </div>
+        <div id="scanResults" class="log-box" style="flex: 1; background: #111;"></div>
+    </div>
+
+
+
+    <!-- Psychedelic Image Overlay -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchView('control')">
+            <svg viewBox="0 0 24 24">
+                <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" />
+            </svg>
+            <span>Control</span>
+        </button>
+        <button class="nav-item" onclick="switchView('settings')">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.6 1.41a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                    stroke="currentColor" stroke-width="2" fill="none" />
+            </svg>
+            <span>Settings</span>
+        </button>
+        <button class="nav-item" onclick="switchView('simulation')">
+            <svg viewBox="0 0 24 24">
+                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" stroke="currentColor" stroke-width="2"
+                    fill="none" />
+            </svg>
+            <span>Simulation</span>
+        </button>
+        <button class="nav-item" onclick="switchView('diagnostics')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                </path>
+            </svg>
+            <span>Diag</span>
+        </button>
+    </nav>
+    <img id="psyImage" src="" alt="Psychedelic Vision">
+
+    <!-- Melt Filter SVG -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="meltFilter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="warp" />
+                <feDisplacementMap id="meltMap" xChannelSelector="R" yChannelSelector="G" scale="0" in="SourceGraphic"
+                    in2="warp" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="modal-overlay" onclick="closeInfo(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeInfo(event, true)">&times;</button>
+            <div id="modalTitle" class="modal-title">Title</div>
+            <div id="modalText">Description goes here.</div>
+        </div>
+    </div>
+
+
+
+    <!-- Install Modal -->
+    <div id="installModal" class="modal-overlay" style="z-index: 3000;">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-title">Install Application</div>
+            <p style="margin: 1rem 0; color: #ccc;">Install the Fossibot App for the best experience (Fullscreen,
+                Offline access).</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+                <button class="btn-main" onclick="installApp()"
+                    style="background: var(--btn-green); color: black; font-weight: bold;">INSTALL</button>
+                <button class="btn-main" onclick="closeInstallModal()" style="background: #333;">LATER</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        const SERVICE_UUID = '0000a002-0000-1000-8000-00805f9b34fb';
+        const WRITE_UUID = '0000c304-0000-1000-8000-00805f9b34fb';
+        const NOTIFY_UUID = '0000c305-0000-1000-8000-00805f9b34fb';
+
+        let device, server, service, writeChar, notifyChar, pollInterval;
+        // Manual override for light state because device feedback is unreliable
+        let manualLightOverride = null;
+
+        // Settings
+        let settings = {
+            mainCap: 2048,
+            expCap: 3840
+        };
+
+        // Initialize Settings from LocalStorage
+        const savedSettings = localStorage.getItem('fossibot-settings');
+        if (savedSettings) {
+            try {
+                settings = JSON.parse(savedSettings);
+            } catch (e) { console.error(e); }
+        }
+
+        // Initial Config UI update
+        // We need to inject the Config UI first, or we can assume it exists
+        // (I will add it in the HTML injection step or assume it is there)
+
+
+        // Initialize Theme
+        const savedTheme = localStorage.getItem('fossibot-theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else {
+            // Default to Industrial
+            setTheme('industrial');
+        }
+
+        // Debug Mode
+        let isDebug = false;
+
+        // Global Registers Storage
+        const registers = {};
+        const settingsRegisters = {};  // 0x1103 settings payload
+
+        // Global accessor for registers
+        function getReg(idx) {
+            return registers[idx] || 0;
+        }
+
+        // Sync Settings UI STATUS LABELS (not dropdowns) with captured SETTINGS (0x1103) values
+        function syncSettingsUI() {
+            // Reg 13: AC Charge Rate (1-5) -> show as watts
+            const chargeRate = settingsRegisters[13] || 0;
+            const chargeRateWatts = [0, 300, 500, 700, 900, 1100][chargeRate] || 0;
+            const chargeRateEl = document.getElementById('status-charge-rate');
+            if (chargeRateEl) chargeRateEl.textContent = chargeRateWatts + 'W';
+
+            // Reg 59: Screen Timeout (index or minutes - scaling unclear)
+            const screenTimeout = settingsRegisters[59] || 0;
+            const screenTimeoutStatus = document.getElementById('status-screen-timeout');
+            if (screenTimeoutStatus) screenTimeoutStatus.textContent = screenTimeout > 0 ? screenTimeout + ' min' : 'Never';
+
+            // Reg 60: AC Standby (mins)
+            const acStandby = settingsRegisters[60] || 0;
+            const acStandbyStatus = document.getElementById('status-ac-standby');
+            if (acStandbyStatus) acStandbyStatus.textContent = acStandby > 0 ? (acStandby / 60) + 'h' : 'Never';
+
+            // Reg 61: DC Standby (mins)
+            const dcStandby = settingsRegisters[61] || 0;
+            const dcStandbyStatus = document.getElementById('status-dc-standby');
+            if (dcStandbyStatus) dcStandbyStatus.textContent = dcStandby > 0 ? (dcStandby / 60) + 'h' : 'Never';
+
+            // Reg 62: Unknown (NOT USB Standby - shows 600 when USB set to 5 mins)
+            // Skipping for now until we determine what this actually is
+
+            // Reg 66: Discharge Lower Limit (÷10 = %)
+            const dischargeLimitRaw = settingsRegisters[66] || 0;
+            const dischargeLimit = dischargeLimitRaw / 10;
+            const dischargeLimitLabel = document.getElementById('val-discharge-limit');
+            if (dischargeLimitLabel) dischargeLimitLabel.textContent = dischargeLimit.toFixed(0) + '%';
+            const dischargeLimitEl = document.getElementById('set-discharge-limit');
+            if (dischargeLimitEl) dischargeLimitEl.value = dischargeLimitRaw;
+
+            // Reg 67: AC Upper Limit EPS (÷10 = %)
+            const acUpperLimitRaw = settingsRegisters[67] || 0;
+            const acUpperLimit = acUpperLimitRaw / 10;
+            const acUpperStatus = document.getElementById('status-ac-upper-limit');
+            if (acUpperStatus) acUpperStatus.textContent = acUpperLimit.toFixed(0) + '%';
+
+            // Reg 68: Machine Shutdown (mins)
+            const machineShutdown = settingsRegisters[68] || 0;
+            const sysStandbyStatus = document.getElementById('status-sys-standby');
+            if (sysStandbyStatus) sysStandbyStatus.textContent = machineShutdown > 0 ? (machineShutdown / 60) + 'h' : 'Never';
+
+            console.log('Settings synced:', { chargeRate, screenTimeout, acStandby, dcStandby, machineShutdown });
+        }
+
+        const COMMANDS = {
+            usb_on: [17, 24, 1], usb_off: [17, 24, 0],
+            dc_on: [17, 25, 1], dc_off: [17, 25, 0],
+            ac_on: [17, 26, 1], ac_off: [17, 26, 0],
+            light_on: [17, 27, 1], light_off: [17, 27, 0]
+        };
+
+        const btns = {
+            usb: document.getElementById('btn-usb'),
+            ac: document.getElementById('btn-ac'),
+            dc: document.getElementById('btn-dc'),
+            light: document.getElementById('btn-light')
+        };
+
+        // Handle multiple connect/disconnect buttons
+        const connectBtns = document.querySelectorAll('.btn-connect');
+        const disconnectBtns = document.querySelectorAll('.btn-disconnect');
+
+        // Psychedelic Images
+        const psyImages = [
+            'img/psy_frog_1764538696814.png',
+            'img/psy_ferret_1764538724368.png',
+            'img/psy_weather_station_1764538710257.png',
+            'img/buddhaman.jpg',
+            'img/catsbigdog.png',
+            'img/psy_cat_camel_1764619217955.png',
+            'img/psy_sausage_pig_1764619233117.png',
+            'img/psy_rolling_plant_1764619247046.png',
+            'img/psy_jumping_fish_1764619261198.png'
+        ];
+
+        // Chaos Level for Melt Effect
+        let chaosLevel = 0;
+        let meltMap = document.getElementById('meltMap');
+
+        function updateMelt() {
+            if (document.body.getAttribute('data-theme') === 'psychedelic') {
+                // Decay chaos
+                chaosLevel = Math.max(0, chaosLevel - 0.5);
+
+                // Update SVG filter
+                if (meltMap) {
+                    meltMap.scale.baseVal = chaosLevel;
+                }
+            } else {
+                chaosLevel = 0;
+                if (meltMap) meltMap.scale.baseVal = 0;
+            }
+            requestAnimationFrame(updateMelt);
+        }
+        requestAnimationFrame(updateMelt);
+
+        function flashPsyImage() {
+            if (document.body.getAttribute('data-theme') !== 'psychedelic') return;
+
+            // Increase Chaos
+            chaosLevel = Math.min(200, chaosLevel + 40);
+
+            const imgEl = document.getElementById('psyImage');
+            const randomImg = psyImages[Math.floor(Math.random() * psyImages.length)];
+
+            imgEl.src = randomImg;
+            imgEl.style.display = 'block';
+
+            setTimeout(() => {
+                imgEl.style.display = 'none';
+            }, 300);
+        }
+
+        // Eye Tracking Logic
+        document.addEventListener('mousemove', (e) => {
+            if (document.body.getAttribute('data-theme') !== 'psychedelic') return;
+
+            const eyes = document.querySelectorAll('.psy-eye');
+            eyes.forEach(eye => {
+                const rect = eye.getBoundingClientRect();
+                const x = (rect.left + rect.width / 2);
+                const y = (rect.top + rect.height / 2);
+
+                const rad = Math.atan2(e.pageX - x, e.pageY - y);
+                const rot = (rad * (180 / Math.PI) * -1) + 180;
+
+                const pupil = eye.querySelector('.psy-pupil');
+
+                // Limit movement within the eye
+                const dist = Math.min(20, Math.hypot(e.pageX - x, e.pageY - y) / 10);
+
+                // Simple rotation for now, can be improved for realistic tracking
+                pupil.style.transform = `translate(-50%, -50%) rotate(${rot}deg) translate(0, -${dist}px)`;
+            });
+        });
+
+        function log(msg) {
+            const line = document.createElement('div');
+            line.textContent = `> ${msg}`;
+            document.getElementById('log').appendChild(line);
+            document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
+        }
+
+        function updateStatus(connected) {
+            const controls = document.getElementById('controls');
+            const dashboard = document.getElementById('dashboard');
+
+            if (connected) {
+                controls.classList.remove('disabled');
+                dashboard.classList.remove('disabled');
+                connectBtns.forEach(b => b.classList.add('hidden'));
+                disconnectBtns.forEach(b => b.classList.remove('hidden'));
+            } else {
+                controls.classList.add('disabled');
+                dashboard.classList.add('disabled');
+                connectBtns.forEach(b => b.classList.remove('hidden'));
+                disconnectBtns.forEach(b => b.classList.add('hidden'));
+            }
+        }
+
+        function calculateChecksum(arr) {
+            let t = 0xffff;
+            for (let byte of arr) {
+                t ^= byte;
+                for (let i = 0; i < 8; i++) t = (t & 1) ? ((t >> 1) ^ 40961) : (t >> 1);
+            }
+            return t & 0xffff;
+        }
+
+        function generateCommandBytes(address, feature, value) {
+            const payload = [address, 6, (feature >> 8) & 0xff, feature & 0xff, (value >> 8) & 0xff, value & 0xff];
+            const checksum = calculateChecksum(payload);
+            return new Uint8Array([...payload, (checksum >> 8) & 0xff, checksum & 0xff]);
+        }
+
+        async function connect() {
+            try {
+                if (!device) {
+                    log("Requesting Bluetooth Device...");
+                    device = await navigator.bluetooth.requestDevice({
+                        filters: [{ namePrefix: 'POWER' }, { namePrefix: 'Fossibot' }],
+                        optionalServices: [SERVICE_UUID]
+                    });
+                    device.addEventListener('gattserverdisconnected', onDisconnected);
+
+                    // Auto-Detect Capacity from Name
+                    if (device.name) {
+                        const name = device.name.toUpperCase();
+                        let detected = null;
+                        if (name.includes('F3600')) {
+                            detected = 3840;
+                            log(`Detected F3600. Auto-setting Capacity to ${detected}Wh.`);
+                        } else if (name.includes('F2400')) {
+                            detected = 2048;
+                            log(`Detected F2400. Auto-setting Capacity to ${detected}Wh.`);
+                        }
+
+                        if (detected) {
+                            settings.mainCap = detected;
+                            localStorage.setItem('fossibot-settings', JSON.stringify(settings));
+                        }
+                    }
+                }
+
+                log("Connecting...");
+                server = await device.gatt.connect();
+                await new Promise(r => setTimeout(r, 500));
+
+                log("Getting Service...");
+                service = await server.getPrimaryService(SERVICE_UUID);
+
+                log("Getting Characteristics...");
+                writeChar = await service.getCharacteristic(WRITE_UUID);
+                notifyChar = await service.getCharacteristic(NOTIFY_UUID);
+
+                log("Enabling notifications on c305...");
+                notifyChar.addEventListener('characteristicvaluechanged', handleNotification);
+                await notifyChar.startNotifications();
+
+                log("Connected! Starting polling on c304...");
+                // Reset override on connect
+                manualLightOverride = null;
+                updateStatus(true);
+                startPolling();
+
+                // Request settings (0x1103) once on connect
+                await new Promise(r => setTimeout(r, 500));  // Wait for first status
+                await sendSettingsRequest();
+
+            } catch (error) {
+                log("Connection failed: " + error);
+                if (device && device.gatt.connected) device.gatt.disconnect();
+            }
+        }
+
+        function handleNotification(event) {
+            try {
+                const value = event.target.value;
+                // debug logging for the first few packets
+                if (!window.hasLoggedData) {
+                    // Log the header bytes to see what we are getting
+                    const h1 = value.getUint8(0).toString(16);
+                    const h2 = value.getUint8(1).toString(16);
+                    log(`Rx ${value.byteLength}b. Header: 0x${h1} 0x${h2}`);
+                    console.log("Rx Data:", value);
+                    window.hasLoggedData = true;
+                }
+                // Relaxed check: Just check for DataView and length. 
+                // We will trust the length 168 mostly? Or maybe the header changed?
+                // Let's attempt to parse even if header is different for now, or just log it.
+                // Keeping strict check but logging will tell us why it fails.
+
+                // Handle 0x1103 SETTINGS payload
+                if (value && value.byteLength >= 6 && value.getUint8(0) === 0x11 && value.getUint8(1) === 0x03) {
+                    log('Received 0x1103 Settings packet!');
+                    for (let i = 0; i < 82; i++) {
+                        const offset = 6 + (i * 2);
+                        if (offset + 1 < value.byteLength) {
+                            settingsRegisters[i] = value.getUint16(offset, false);
+                        }
+                    }
+                    // Sync UI dropdowns with received settings
+                    syncSettingsUI();
+                }
+
+                // Handle 0x1104 STATUS payload
+                if (value && value.byteLength >= 6 && value.getUint8(0) === 0x11 && value.getUint8(1) === 0x04) {
+                    const getRegLocal = (idx) => {
+                        const offset = 6 + (idx * 2);
+                        return (offset + 1 < value.byteLength) ? value.getUint16(offset, false) : 0;
+                    };
+
+                    // Populate Global Registers
+                    for (let i = 0; i < 90; i++) {
+                        registers[i] = getRegLocal(i);
+                    }
+                    // For compatibility with existing code using local vars (if any needed below, though most use global getReg now? No, local vars used below)
+                    // We keep local gets or just use global registers? 
+                    // So we rename local to getRegLocal to avoid confusion, or just keep it.
+                    // We renamed it to getRegLocal above.
+
+                    const battery = getRegLocal(56) / 10.0; // Main Battery SOC
+                    const s1Raw = getRegLocal(53); // S1 SOC Raw
+                    const s2Raw = getRegLocal(55); // S2 SOC Raw
+
+                    const input = getRegLocal(3);
+                    const output = getRegLocal(39);
+                    const sysWatts = getRegLocal(21);
+                    const totalWatts = getRegLocal(20);
+                    const minutes = getRegLocal(59);
+
+                    const stateReg = getRegLocal(41);
+                    const usbState = (stateReg & 512) !== 0;
+                    const dcState = (stateReg & 1024) !== 0;
+                    const acState = (stateReg & 2048) !== 0;
+
+                    // Battery Extension Logic
+                    // S1/S2: 0 = missing, otherwise 10-1010. Pct = (val - 10) / 10
+                    let s1Pct = 0;
+                    let s2Pct = 0;
+                    let hasS1 = false;
+                    let hasS2 = false;
+
+                    if (s1Raw > 0) {
+                        s1Pct = Math.max(0, (s1Raw - 10) / 10.0);
+                        hasS1 = true;
+                    }
+                    if (s2Raw > 0) {
+                        s2Pct = Math.max(0, (s2Raw - 10) / 10.0);
+                        hasS2 = true;
+                    }
+
+                    // Total Energy Calculation
+                    const mainWh = (battery / 100) * settings.mainCap;
+                    const s1Wh = hasS1 ? (s1Pct / 100) * settings.expCap : 0;
+                    const s2Wh = hasS2 ? (s2Pct / 100) * settings.expCap : 0;
+                    const totalWh = mainWh + s1Wh + s2Wh;
+                    const totalKwh = totalWh / 1000;
+
+                    // Update UI for Extensions
+                    const extContainer = document.getElementById('extBatteries');
+                    let extText = [];
+                    if (hasS1) extText.push(`Ext1: ${s1Pct.toFixed(1)}%`);
+                    if (hasS2) extText.push(`Ext2: ${s2Pct.toFixed(1)}%`);
+                    extContainer.textContent = extText.join(' | ');
+
+                    if (manualLightOverride !== null) {
+                        lightState = manualLightOverride;
+                    } else {
+                        lightState = (stateReg & 4096) !== 0;
+                    }
+
+                    // Enable Dashboard if data is flowing
+                    document.getElementById('dashboard').classList.remove('disabled');
+                    document.getElementById('controls').classList.remove('disabled');
+
+                    if (btns.usb) updateButtonState(btns.usb, usbState);
+                    if (btns.dc) updateButtonState(btns.dc, dcState);
+                    if (btns.ac) updateButtonState(btns.ac, acState);
+                    if (btns.light) updateButtonState(btns.light, lightState);
+
+                    document.getElementById('inputWatts').textContent = input;
+                    document.getElementById('outputWatts').textContent = output;
+
+                    // Calculate System Watts (Reg 21 is ~768 which implies ~76W idle if scaled /10)
+                    const calcSysWatts = (sysWatts > 0) ? (sysWatts / 10).toFixed(1) : 0;
+                    document.getElementById('sysWatts').textContent = calcSysWatts;
+
+                    // Total Watts = Output + System Override
+                    const combinedTotal = totalWatts + parseFloat(calcSysWatts);
+                    document.getElementById('totalWatts').textContent = Math.round(combinedTotal);
+                    document.getElementById('batteryPercent').textContent = Math.floor(battery);
+
+                    document.getElementById('remainingKwh').textContent = totalKwh.toFixed(2);
+
+                    document.getElementById('remainingHours').textContent = minutes > 0 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : "--";
+
+                    document.getElementById('batteryRing').setAttribute('stroke-dasharray', `${battery}, 100`);
+                    document.getElementById('batteryRing').style.color = battery < 20 ? "#ef4444" : "#60a5fa";
+
+                    // Labs Updates -> Settings Updates
+                    updateSettingsUI(getRegLocal);
+                }
+            } catch (err) {
+                console.error("Error in handleNotification:", err);
+            }
+        }
+
+        // Simulation State (Global)
+        const simAppliances = {};
+
+        function toggleSimAppliance(name, watts, type = 'output') {
+            const btn = document.querySelector(`button[onclick="toggleSimAppliance('${name}', ${watts}, '${type}')"]`) ||
+                document.querySelector(`button[onclick="toggleSimAppliance('${name}', ${watts})"]`);
+
+            if (simAppliances[name]) {
+                delete simAppliances[name];
+                if (btn) btn.classList.remove('active');
+            } else {
+                simAppliances[name] = { watts, type };
+                if (btn) btn.classList.add('active');
+            }
+            updateSimulation();
+        }
+
+        // Updated Simulation Logic
+        function updateSimulation() {
+            // Calculate totals from appliances
+            let totalIn = 0;
+            let totalOut = 0;
+
+            Object.values(simAppliances).forEach(app => {
+                if (app.type === 'input') totalIn += app.watts;
+                else totalOut += app.watts;
+            });
+
+            // Update Inputs
+            const inEl = document.getElementById('sim-input');
+            if (inEl) inEl.value = totalIn;
+            const outEl = document.getElementById('sim-output');
+            if (outEl) outEl.value = totalOut;
+
+            if (!isDebug) return;
+
+            const batEl = document.getElementById('sim-battery');
+            const battery = batEl ? parseFloat(batEl.value) : 50;
+            const sysEl = document.getElementById('sim-sys');
+            const sys = sysEl ? parseFloat(sysEl.value) : 0;
+
+            // Mock Data Packet
+            const input = totalIn;
+            const output = totalOut;
+            const total = output + sys;
+
+            // Reg 3: Input Watts
+            registers[3] = input;
+            // Reg 39: Output Watts
+            registers[39] = output;
+            // Reg 20: Total Output
+            registers[20] = total;
+            // Reg 21: System Watts (scaled * 10)
+            registers[21] = sys * 10;
+            // Reg 56: Battery SOC (* 10)
+            registers[56] = battery * 10;
+            registers[22] = 4800 + (battery * 10); // Rough voltage sim
+
+            // Manually update the DOM elements for simulation
+            const elIn = document.getElementById('inputWatts'); if (elIn) elIn.textContent = input;
+            const elOut = document.getElementById('outputWatts'); if (elOut) elOut.textContent = output;
+            const elSys = document.getElementById('sysWatts'); if (elSys) elSys.textContent = sys;
+            const elTot = document.getElementById('totalWatts'); if (elTot) elTot.textContent = total;
+            const elBat = document.getElementById('batteryPercent'); if (elBat) elBat.textContent = Math.floor(battery);
+
+            const totalKwh = (battery / 100) * (settings.mainCap / 1000);
+            const elKwh = document.getElementById('remainingKwh'); if (elKwh) elKwh.textContent = totalKwh.toFixed(2);
+
+            const elRing = document.getElementById('batteryRing');
+            if (elRing) {
+                elRing.setAttribute('stroke-dasharray', `${battery}, 100`);
+                elRing.style.color = battery < 20 ? "#ef4444" : "#60a5fa";
+            }
+        }
+
+
+        function updateSettingsUI(getReg) {
+            // Reg 64: Power State (0=On, 1=Off?) 
+            // We won't put a simple toggle here to avoid accidental shutdown.
+            // Maybe a button "Turn Off Device"
+
+            // Reg 57: AC Silent
+            const acSilent = getReg(57);
+            const acSilentEl = document.getElementById('set-ac-silent');
+            if (acSilentEl) {
+                acSilentEl.checked = (acSilent === 1);
+            }
+
+            // Remapped AC Silent to Sound/Silent Mode.
+            // Removing separate AC Silent control for now as it maps to the same reg.
+            // Or we can keep "AC Silent" and map it to the same reg if user distinguishes them.
+            // For now, I'll hide the AC Silent specific control or just use one.
+
+            // Reg 67: EPS Limit (AC Charging Upper Limit)
+            const epsLim = getReg(67);
+            if (document.activeElement.id !== 'set-eps-limit') {
+                updateSelect('set-eps-limit', epsLim);
+            }
+            // Update EPS toggle (On if > 600)
+            const epsToggle = document.getElementById('set-eps-toggle');
+            if (epsToggle) epsToggle.checked = (epsLim > 600);
+            // Update status
+            const epsStatus = document.getElementById('status-eps');
+            if (epsStatus) epsStatus.textContent = epsLim > 600 ? '[On]' : '[Off]';
+
+            // Reg 66: Discharge Limit
+            const disLim = getReg(66);
+            if (document.activeElement.id !== 'set-discharge-limit') {
+                document.getElementById('set-discharge-limit').value = disLim;
+                updateSliderLabel('discharge_limit', disLim);
+            }
+
+            // TIMERS NOW COME FROM SETTINGS REGISTERS (0x1103) via syncSettingsUI()
+            // Do NOT update from STATUS (0x1104) registers here as they have different meanings
+
+            // Temps & Fans Update
+            const valACFreq = getReg(16); // 500 -> 50.0 Hz
+            const valBatV = getReg(22); // 4988 -> 49.88 V
+            const fanLvl = getReg(69);
+            const valReg20 = getReg(20); // Candidate for Temp?
+
+            const diagEl = document.getElementById('diagnostics');
+            if (diagEl) {
+                diagEl.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; font-size: 0.8rem; margin-top: 0.5rem; border-top: 1px dotted #444; padding-top:0.25rem;">
+                         <span>⚡ ${(valACFreq / 10).toFixed(1)}Hz</span>
+                         <span>🔋 ${(valBatV / 100).toFixed(1)}V</span>
+                         <span>🌡️ R20: ${valReg20}</span>
+                         <span>🌀 Lvl ${fanLvl}</span>
+                    </div>
+                `;
+            }
+        }
+
+        function updateConfig(key, val) {
+            if (key === 'mainCap') settings.mainCap = parseInt(val);
+            if (key === 'expCap') settings.expCap = parseInt(val);
+            localStorage.setItem('fossibot-settings', JSON.stringify(settings));
+            calculateRuntime();
+        }
+
+        // Initialize Config Inputs
+        const mainCapEl = document.getElementById('conf-main-cap');
+        if (mainCapEl) mainCapEl.value = settings.mainCap;
+        const expCapEl = document.getElementById('conf-exp-cap');
+        if (expCapEl) expCapEl.value = settings.expCap;
+
+        function updateSelect(id, val) {
+            const el = document.getElementById(id);
+            if (el && document.activeElement !== el) {
+                el.value = val;
+            }
+        }
+
+        // startPolling is now defined later as an async function near scanRegisters
+
+        function stopPolling() {
+            isPolling = false; // Signal the async loop to stop
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+
+        async function sendReadRequest() {
+            if (!writeChar) return;
+            const payload = [0x11, 0x04, 0x00, 0x00, 0x00, 0x50];
+            const checksum = calculateChecksum(payload);
+            const cmd = new Uint8Array([...payload, (checksum >> 8) & 0xff, checksum & 0xff]);
+            try {
+                await writeChar.writeValue(cmd);
+            } catch (e) {
+                log("Write error: " + e.message);
+            }
+        }
+
+        async function sendSettingsRequest() {
+            if (!writeChar) return;
+            // Request 0x1103 settings payload (same structure as status but function code 0x03)
+            const payload = [0x11, 0x03, 0x00, 0x00, 0x00, 0x50];
+            const checksum = calculateChecksum(payload);
+            const cmd = new Uint8Array([...payload, (checksum >> 8) & 0xff, checksum & 0xff]);
+            try {
+                log("Requesting settings (0x1103)...");
+                await writeChar.writeValue(cmd);
+            } catch (e) {
+                log("Settings request error: " + e.message);
+            }
+        }
+
+        function updateButtonState(btn, isOn) {
+            if (isOn) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        function toggle(type) {
+            // Flash image if psychedelic theme
+            flashPsyImage();
+
+            const btn = btns[type];
+            if (!btn || btn.classList.contains('disabled')) return;
+
+            let isCurrentlyOn = btn.classList.contains('active');
+
+            // Special handling for light to fix state detection
+            if (type === 'light') {
+                if (manualLightOverride !== null) {
+                    isCurrentlyOn = manualLightOverride;
+                }
+                // Toggle the state
+                const newState = !isCurrentlyOn;
+                manualLightOverride = newState;
+                log(`Light manual override: ${newState ? 'ON' : 'OFF'}`);
+
+                // Optimistically update UI
+                updateButtonState(btn, newState);
+
+                // Send command
+                const cmd = `light_${newState ? 'on' : 'off'}`;
+                sendCommand(cmd);
+                return;
+            }
+
+            const cmd = `${type}_${isCurrentlyOn ? 'off' : 'on'}`;
+            sendCommand(cmd);
+        }
+
+        async function sendCommand(cmdName) {
+            if (!writeChar) {
+                log("Not connected!");
+                return;
+            }
+            const [addr, reg, val] = COMMANDS[cmdName];
+            const data = generateCommandBytes(addr, reg, val);
+            try {
+                log(`Sending ${cmdName}...`);
+                await writeChar.writeValue(data);
+                log("Command sent");
+                await new Promise(r => setTimeout(r, 200));
+                await sendReadRequest();
+            } catch (error) {
+                log("Send failed: " + error);
+            }
+        }
+
+        function onDisconnected() {
+            log("Disconnected");
+            stopPolling();
+            manualLightOverride = null; // Reset override
+            updateStatus(false);
+        }
+
+
+        function disconnect() {
+            if (device && device.gatt.connected) {
+                device.gatt.disconnect();
+            } else {
+                onDisconnected();
+            }
+        }
+
+
+
+
+        console.log("Connect buttons found:", connectBtns.length);
+        connectBtns.forEach(btn => btn.addEventListener('click', connect));
+        disconnectBtns.forEach(btn => btn.addEventListener('click', disconnect));
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW failed', err));
+            });
+        }
+
+        function toggleScanner() {
+            const el = document.getElementById('scanner');
+            el.classList.toggle('hidden');
+        }
+
+        let pollingActive = false; // Tracks if the loop is actually running
+        let isPolling = false; // Control flag for the async polling loop
+
+        async function startPolling() {
+            if (isPolling) return;
+            isPolling = true;
+            pollingActive = true;
+            while (isPolling && device && device.gatt.connected) {
+                await sendReadRequest();
+                await new Promise(r => setTimeout(r, 2000));
+            }
+            pollingActive = false;
+        }
+
+        async function scanRegisters() {
+            if (!writeChar) {
+                alert("Not connected!");
+                return;
+            }
+
+            // Stop polling and Wait for it to clear
+            stopPolling();
+            const resultsDiv = document.getElementById('scanResults');
+            resultsDiv.innerHTML = '<div class="text-yellow-400">Stopping Polling...</div>';
+
+            let retries = 0;
+            while (pollingActive && retries < 10) {
+                await new Promise(r => setTimeout(r, 200));
+                retries++;
+            }
+
+            const start = parseInt(document.getElementById('scanStart').value);
+            const end = parseInt(document.getElementById('scanEnd').value);
+            const count = (end - start) + 1;
+
+            if (count <= 0) {
+                alert("End must be >= Start");
+                return;
+            }
+
+            resultsDiv.innerHTML = `<div class="text-yellow-400">Scanning Regs ${start} to ${end}...</div>`;
+            renderScanResults(start, count); // Initial Render
+
+            for (let i = 0; i < count; i++) {
+                const reg = start + i;
+                const payload = [0x11, 0x04, (reg >> 8) & 0xff, reg & 0xff, 0x00, 0x01];
+                const checksum = calculateChecksum(payload);
+                const cmd = new Uint8Array([...payload, (checksum >> 8) & 0xff, checksum & 0xff]);
+                try {
+                    await writeChar.writeValue(cmd);
+                    // Increased delay to ensure response clears
+                    await new Promise(r => setTimeout(r, 250));
+                } catch (e) {
+                    console.error("Scan Error Reg " + reg, e);
+                    // If Busy, wait longer and retry once
+                    await new Promise(r => setTimeout(r, 500));
+                }
+
+                // Real-time update (partial or full)
+                // Full re-render is cheap for small grids
+                renderScanResults(start, count);
+            }
+
+            // Render Results
+            renderScanResults(start, count);
+
+            // Resume
+            startPolling();
+        }
+
+        function renderScanResults(start, count) {
+            const resultsDiv = document.getElementById('scanResults');
+            let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">';
+
+            for (let i = 0; i < count; i++) {
+                const reg = start + i;
+                const val = registers[reg];
+                // Only show if defined or if we requested it (show ? if missing)
+                const displayVal = (val !== undefined) ? val : '?';
+                const hexVal = (val !== undefined) ? `0x${val.toString(16).padStart(4, '0')}` : '';
+
+                html += `
+                    <div style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 0.25rem; font-size: 0.8rem;">
+                        <div style="color: #aaa; font-size: 0.7rem;">Reg ${reg}</div>
+                        <div style="color: #fff; font-weight: bold;">${displayVal}</div>
+                        <div style="color: #666; font-size: 0.7rem;">${hexVal}</div>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+
+        // Terminal Command Handling
+        function handleTerminalCommand(event) {
+            if (event.key === 'Enter') {
+                const input = event.target.value.trim();
+                event.target.value = '';
+                log(`guest@fossibot:~$ ${input}`);
+
+                if (input === 'help') {
+                    log("Available commands: help, clear, connect, disconnect, usb on/off, ac on/off, dc on/off, light on/off, theme [name], debug on/off");
+                } else if (input === 'clear') {
+                    document.getElementById('log').innerHTML = '';
+                } else if (input === 'connect') {
+                    connect();
+                } else if (input === 'disconnect') {
+                    disconnect();
+                } else if (input === 'debug on') {
+                    activateDebug();
+                    log("Debug mode ON");
+                } else if (input === 'debug off') {
+                    document.getElementById('debugConsole').style.display = 'none';
+                    isDebug = false;
+                    log("Debug mode OFF");
+                } else if (input.startsWith('theme ')) {
+                    const themeName = input.split(' ')[1];
+                    setTheme(themeName);
+                } else if (['usb on', 'usb off', 'ac on', 'ac off', 'dc on', 'dc off', 'light on', 'light off'].includes(input)) {
+                    const [type, state] = input.split(' ');
+                    const btn = btns[type];
+                    if (btn && !btn.classList.contains('disabled')) {
+                        const isCurrentlyOn = btn.classList.contains('active');
+                        if ((state === 'on' && !isCurrentlyOn) || (state === 'off' && isCurrentlyOn)) {
+                            toggle(type);
+                        } else {
+                            log(`${type} is already ${state}`);
+                        }
+                    } else {
+                        log("Cannot execute command. Check connection.");
+                    }
+                } else {
+                    log(`Command not found: ${input}`);
+                }
+            }
+        }
+
+        // Theme Handling
+        function setTheme(themeName) {
+            document.body.setAttribute('data-theme', themeName);
+            const el = document.getElementById('themeSelect');
+            if (el) el.value = themeName;
+            localStorage.setItem('fossibot-theme', themeName);
+        }
+
+        // Info Modal Logic
+        const INFO_TEXTS = {
+            'DC': "DC Powers 12v appliances like Fridge, Lights, Water Pump.",
+            'AC': "AC are for big appliances like Induction Hob or any other domestic appliance using a proper house plug.",
+            'USB': "USB will enable the USB ports only on the Fossi. If you have AC Plug sockets with USB connections it doesn't control this. It's separate."
+        };
+
+        function showInfo(e, type) {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent toggling the button
+            console.log("Opening Info for:", type);
+            const text = INFO_TEXTS[type];
+            if (text) {
+                document.getElementById('modalTitle').textContent = type + ' Info';
+                document.getElementById('modalText').textContent = text;
+                document.getElementById('infoModal').style.display = 'flex';
+            } else {
+                console.error("No info text for", type);
+            }
+        }
+
+        function closeInfo(e, force) {
+            if (force || e.target.classList.contains('modal-overlay')) {
+                document.getElementById('infoModal').style.display = 'none';
+            }
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        const installBtnUi = document.getElementById('btn-install-ui');
+        const installBtnTerm = document.getElementById('btn-install-term');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log("PWA: beforeinstallprompt fired");
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Show subtle buttons
+            const btnUI = document.getElementById('btn-install-ui');
+            const btnTerm = document.getElementById('btn-install-term');
+            if (btnUI) btnUI.classList.remove('hidden');
+            if (btnTerm) btnTerm.classList.remove('hidden');
+
+            // Also show the visible "popup" asking to install
+            // Check if user has dismissed it before to avoid annoyance
+            if (!localStorage.getItem('fossibot-install-dismissed')) {
+                document.getElementById('installModal').style.display = 'flex';
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log("PWA: App installed");
+            deferredPrompt = null;
+            closeInstallModal();
+        });
+
+        async function installApp() {
+            closeInstallModal();
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to the install prompt: ${outcome}`);
+            deferredPrompt = null;
+            installBtnUi.classList.add('hidden');
+            installBtnTerm.classList.add('hidden');
+        }
+
+        function closeInstallModal() {
+            document.getElementById('installModal').style.display = 'none';
+            // Remember dismissal for this session/device
+            localStorage.setItem('fossibot-install-dismissed', 'true');
+        }
+
+        // Settings Logic
+        // View Switching
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            document.getElementById('view-' + viewId).classList.add('active');
+
+            // Highlight nav
+            const navIndex = ['control', 'settings', 'simulation', 'diagnostics'].indexOf(viewId);
+            if (navIndex >= 0) {
+                document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
+            }
+
+            if (viewId === 'diagnostics') renderDiagnostics();
+        }
+
+        // Register definitions with format info for human-readable display
+        const KNOWN_REGS = {
+            2: { name: 'Charge Level', format: 'charge_level' },  // 1=300W,2=500W,3=700W,4=900W,5=1100W
+            3: { name: 'Input Watts (AC)', format: 'watt' },
+            6: { name: 'Input Watts (Total)', format: 'watt' },
+            13: { name: 'AC Charge Rate', format: 'level' },
+            16: { name: 'Unknown (16)', format: 'raw' },
+            18: { name: 'AC Out Voltage', format: 'volt' },
+            19: { name: 'AC Out Frequency', format: 'freq01' },
+            20: { name: 'Total Output', format: 'watt' },
+            21: { name: 'System Draw (~1A)', format: 'sys_watt' },
+            22: { name: 'AC In Frequency', format: 'freq001' },
+            24: { name: 'USB Toggle', format: 'toggle' },
+            25: { name: 'DC Toggle', format: 'toggle' },
+            26: { name: 'AC Toggle', format: 'toggle' },
+            27: { name: 'Light Mode', format: 'light' },
+            30: { name: 'USB1 Out', format: 'watt01' },
+            31: { name: 'USB2 Out', format: 'watt01' },
+            34: { name: 'USB-C1 Out', format: 'watt01' },
+            35: { name: 'USB-C2 Out', format: 'watt01' },
+            36: { name: 'USB-C3 Out', format: 'watt01' },
+            37: { name: 'USB-C4 Out', format: 'watt01' },
+            39: { name: 'Total Output', format: 'watt' },
+            41: { name: 'State Flags', format: 'flags' },
+            42: { name: 'State Flags 2', format: 'flags' },
+            47: { name: 'Flags (47)', format: 'flags' },
+            48: { name: 'Flags (48)', format: 'flags' },
+            52: { name: 'Unknown (180)', format: 'raw' },  // Static value
+            53: { name: 'Ext1 SOC', format: 'ext_soc' },
+            54: { name: 'Unknown (374)', format: 'raw' },  // Static value
+            55: { name: 'Ext2 SOC', format: 'ext_soc' },
+            56: { name: 'Main SOC', format: 'percent01' },
+            57: { name: 'AC Silent', format: 'toggle' },
+            58: { name: 'Time to Full', format: 'time' },
+            59: { name: 'Screen Timer (Counter)', format: 'time' },
+            60: { name: 'AC Timer (Counter)', format: 'mins' },
+            61: { name: 'DC Timer (Counter)', format: 'mins' },
+            62: { name: 'USB Timer (Counter)', format: 'raw' },
+            66: { name: 'Discharge Limit', format: 'percent01' },
+            67: { name: 'Unknown (67)', format: 'raw' },
+            68: { name: 'Unknown (68)', format: 'raw' },
+            69: { name: 'Fan Level', format: 'level' },
+            80: { name: 'CRC Checksum', format: 'flags' }
+        };
+
+        // Format register value to human-readable string
+        function formatRegisterData(regIdx, val) {
+            if (val === undefined) return '';
+            const reg = KNOWN_REGS[regIdx];
+            if (!reg || !reg.format) return '';
+
+            switch (reg.format) {
+                case 'volt': return (val / 10).toFixed(1) + 'V';
+                case 'freq01': return (val / 10).toFixed(1) + 'Hz';
+                case 'freq001': return (val / 100).toFixed(2) + 'Hz';
+                case 'watt': return val + 'W';
+                case 'watt01': return (val / 10).toFixed(1) + 'W';
+                case 'sys_watt':  // Voltage ÷10 × estimated amps (assume 1A)
+                    const voltage = val / 10;
+                    const estWatts = voltage * 1;  // Assume 1A draw
+                    return estWatts.toFixed(1) + 'W';
+                case 'percent01': return (val / 10).toFixed(1) + '%';
+                case 'ext_soc': return val > 0 ? ((val - 10) / 10).toFixed(1) + '%' : 'N/A';
+                case 'toggle': return val ? 'ON' : 'OFF';
+                case 'light': return ['OFF', 'ON', 'FLASH', 'SOS'][val] || val;
+                case 'level': return 'Level ' + val;
+                case 'charge_level':
+                    const watts = [0, 300, 500, 700, 900, 1100][val] || val * 200;
+                    return 'Lvl ' + val + ' (' + watts + 'W)';
+                case 'time': return val > 0 ? Math.floor(val / 60) + 'h ' + (val % 60) + 'm' : '--';
+                case 'mins': return val > 0 ? val + ' min' : 'Never';
+                case 'flags': return '0x' + val.toString(16).toUpperCase();
+                default: return '';
+            }
+        }
+
+        let lastDiagValues = {};
+
+        function renderDiagnostics() {
+            const div = document.getElementById('full-diag-list');
+            if (!div) return;
+
+            let html = '';
+
+            // 0x1104 Input Registers
+            html += '<h3 style="margin-top: 0; color: var(--text-green);">⚡ Input Registers (0x1104) - Real-time Status</h3>';
+            html += '<table style="width:100%; border-collapse:collapse; font-size: 0.8rem; margin-top: 0.5rem;">';
+            html += '<tr><th style="text-align:left; border-bottom:1px solid #444;">Reg</th><th style="text-align:left; border-bottom:1px solid #444;">Name</th><th style="text-align:right; border-bottom:1px solid #444;">Data</th><th style="text-align:right; border-bottom:1px solid #444;">Raw</th></tr>';
+
+            // List 0-90
+            for (let i = 0; i <= 90; i++) {
+                const regInfo = KNOWN_REGS[i];
+                const name = regInfo ? regInfo.name : '-';
+                const val = registers[i];
+                const valStr = (val !== undefined) ? val : '?';
+                const hexStr = (val !== undefined) ? `0x${val.toString(16)}` : '';
+                const dataStr = formatRegisterData(i, val);
+
+                const color = (valStr !== '?' && valStr > 0) ? '#fff' : '#666';
+                const rowColor = (i % 2 === 0) ? 'rgba(255,255,255,0.05)' : 'transparent';
+
+                // Diff Logic
+                let valClass = '';
+                if (val !== undefined) {
+                    const last = lastDiagValues[i];
+                    if (last !== undefined && val !== last) {
+                        if (val > last) valClass = 'flash-up';
+                        else if (val < last) valClass = 'flash-down';
+                    }
+                    lastDiagValues[i] = val;
+                }
+
+                const hideZero = document.getElementById('diag-hide-zero') && document.getElementById('diag-hide-zero').checked;
+
+                if (hideZero && (val === undefined || val === 0)) {
+                    continue;
+                }
+
+                html += `<tr style="background:${rowColor}; color:${color}">
+                    <td style="padding:0.25rem;">${i}</td>
+                    <td style="padding:0.25rem; color:#aaa;">${name}</td>
+                    <td style="padding:0.25rem; text-align:right; color:var(--text-green); font-weight:bold;">
+                        <span class="${valClass}">${dataStr}</span>
+                    </td>
+                    <td style="padding:0.25rem; text-align:right;">
+                        <span class="${valClass}">${valStr}</span> 
+                        <span style="font-size:0.7rem; color:#444;">${hexStr}</span>
+                    </td>
+                 </tr>`;
+            }
+            html += '</table>';
+
+            // Settings Section (0x1103 payload)
+            const hasSettings = Object.keys(settingsRegisters).length > 0;
+            if (hasSettings) {
+                html += '<h3 style="margin-top: 2rem; color: var(--text-blue);">📋 Holding Registers (0x1103) - Settings</h3>';
+                html += '<table style="width:100%; border-collapse:collapse; font-size: 0.8rem; margin-top: 0.5rem;">';
+                html += '<tr><th style="text-align:left; border-bottom:1px solid #444;">Reg</th><th style="text-align:left; border-bottom:1px solid #444;">Name</th><th style="text-align:right; border-bottom:1px solid #444;">Value</th></tr>';
+
+                // Settings register definitions (0x1103 payload) - Confirmed via testing
+                const SETTINGS_REGS = {
+                    13: 'AC Charge Rate (1-5)',
+                    14: 'AC Charge Max Limit (W)',
+                    16: 'Frequency Setting (Hz/10)',
+                    20: 'Total Output / DC Max (A)',
+                    24: 'USB Enabled',
+                    25: 'DC Enabled (12V)',
+                    26: 'AC Enabled (Inverter)',
+                    27: 'Light Mode (0-3)',
+                    32: 'Firmware Version?',
+                    56: 'Key Sound (0/1)',
+                    57: 'Silent Charging (0/1)',
+                    59: 'Screen Timeout (mins)',
+                    60: 'AC Standby (mins)',
+                    61: 'DC Standby (mins)',
+                    62: 'USB Standby (Seconds)',
+                    66: 'Discharge Lower Limit (%/10)',
+                    67: 'AC Upper Limit EPS (%/10)',
+                    68: 'Machine Shutdown (mins)',
+                    80: 'CRC Checksum'
+                };
+
+                for (let i = 0; i <= 82; i++) {
+                    const val = settingsRegisters[i];
+
+                    const hideZero = document.getElementById('diag-hide-zero') && document.getElementById('diag-hide-zero').checked;
+                    if (hideZero && (val === undefined || val === 0)) {
+                        continue;
+                    }
+
+                    // Show if defined, even if 0. Use SETTINGS_REGS for naming.
+                    if (val !== undefined) {
+                        const name = SETTINGS_REGS[i] || '-';
+                        const rowColor = (i % 2 === 0) ? 'rgba(255,255,255,0.05)' : 'transparent';
+                        const color = (val > 0) ? '#fff' : '#888';
+                        html += `<tr style="background:${rowColor}; color:${color}">
+                            <td style="padding:0.25rem;">${i}</td>
+                            <td style="padding:0.25rem; color:#aaa;">${name}</td>
+                            <td style="padding:0.25rem; text-align:right;">${val} <span style="font-size:0.7rem; color:#444;">0x${val.toString(16)}</span></td>
+                         </tr>`;
+                    }
+                }
+                html += '</table>';
+            } else {
+                html += '<p style="margin-top: 2rem; color: #666; font-style: italic;">Settings not yet received. Reconnect to capture 0x1103 packet.</p>';
+            }
+
+            div.innerHTML = html;
+        }
+
+        let diagAutoRefreshInterval = null;
+        let diagRefreshMs = 2000;  // Default 2 seconds
+        let lastSettingsRequestTime = 0;
+        const SETTINGS_REFRESH_INTERVAL = 60000;  // Request settings once per minute
+
+        // Combined refresh that updates display and occasionally requests settings
+        async function diagFullRefresh() {
+            renderDiagnostics();
+
+            // Only request settings once per minute (not every refresh)
+            const now = Date.now();
+            if (writeChar && (now - lastSettingsRequestTime) >= SETTINGS_REFRESH_INTERVAL) {
+                lastSettingsRequestTime = now;
+                await sendSettingsRequest();
+            }
+        }
+
+        function toggleDiagAutoRefresh(enabled) {
+            if (enabled) {
+                if (!diagAutoRefreshInterval) {
+                    diagFullRefresh(); // Immediate update
+                    diagAutoRefreshInterval = setInterval(diagFullRefresh, diagRefreshMs);
+                }
+            } else {
+                if (diagAutoRefreshInterval) {
+                    clearInterval(diagAutoRefreshInterval);
+                    diagAutoRefreshInterval = null;
+                }
+            }
+        }
+
+        function updateDiagRefreshInterval() {
+            const sel = document.getElementById('diag-refresh-interval');
+            diagRefreshMs = parseInt(sel.value) || 2000;
+
+            // Restart interval if running
+            if (diagAutoRefreshInterval) {
+                clearInterval(diagAutoRefreshInterval);
+                diagAutoRefreshInterval = setInterval(diagFullRefresh, diagRefreshMs);
+            }
+        }
+
+        // Initialize Auto Refresh if checked
+        setTimeout(() => {
+            const chk = document.getElementById('diag-auto-refresh');
+            if (chk && chk.checked) toggleDiagAutoRefresh(true);
+        }, 1000);
+
+        async function setRegister(reg, val) {
+            const cmd = generateCommandBytes(17, reg, val); // Address 17
+            if (device && writeChar) {
+                try {
+                    await writeChar.writeValue(cmd);
+                    log(`Set Reg ${reg} to ${val}`);
+                    await new Promise(r => setTimeout(r, 200));
+                    await sendReadRequest();
+                } catch (e) { log("Error: " + e); }
+            } else {
+                if (isDebug) {
+                    mockSimulate(reg, val);
+                }
+                log(`(Sim) Set Reg ${reg} to ${val}`);
+            }
+        }
+
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('fossibot-theme', themeName);
+            // Sync Dropdown
+            const sel = document.getElementById('theme-select');
+            if (sel) sel.value = themeName;
+        }
+
+        function toggleSetting(name) {
+            const el = document.getElementById('set-' + name.replace('_', '-'));
+            let val = el.checked ? 1 : 0;
+
+            if (name === 'ac_silent') {
+                setRegister(57, val);
+            } else if (name === 'eps_toggle') {
+                // AC Charging On/Off
+                // On -> 1100 (Max), Off -> 10 (Standby)
+                setRegister(67, val ? 1100 : 10);
+            } else if (name === 'power_off') {
+                if (confirm("Are you sure you want to turn off the device?")) {
+                    setRegister(64, 1);
+                } else {
+                    el.checked = !el.checked; // Revert
+                }
+            }
+        }
+
+        function updateSlider(name, val) {
+            const map = { 'input_limit': 67, 'discharge_limit': 66 };
+            if (map[name]) setRegister(map[name], parseInt(val));
+            updateSliderLabel(name, val);
+        }
+
+        function updateSliderLabel(name, val) {
+            let label = val;
+            if (name === 'input_limit' || name === 'discharge_limit') {
+                label = (val / 10).toFixed(1) + '%';
+                if (val == 1000) label = "100%";
+            }
+            const el = document.getElementById('val-' + name.replace('_', '-'));
+            if (el) el.textContent = label;
+        }
+
+        function changeSelect(name) {
+            const el = document.getElementById('set-' + name.replace('_', '-'));
+            const val = parseInt(el.value);
+            const map = {
+                'screen_timeout': 60,
+                // 'sys_standby': 59, // Reg 59 might be remaining time? User dump says 14329.
+                'ac_standby': 61, 'dc_standby': 62,
+                'eps_limit': 67
+            };
+            if (map[name]) setRegister(map[name], val);
+            // USB Unknown currently
+            if (name === 'sys_standby') {
+                // Temp: Try Reg 59 anyway? Or just log
+                // setRegister(59, val); 
+                console.log("System Standby set to " + val + " (Reg Unknown/Conflict)");
+            }
+        }
+
+        function changeInput(name) {
+            const el = document.getElementById('set-' + name.replace('_', '-'));
+            const val = parseInt(el.value);
+            if (name === 'booking_charge') setRegister(63, val);
+        }
+
+        function updateBookingFromTime() {
+            const timeEl = document.getElementById('set-booking-time');
+            const minsEl = document.getElementById('set-booking-charge');
+
+            if (!timeEl.value) return;
+
+            const [hours, mins] = timeEl.value.split(':').map(Number);
+            const now = new Date();
+            let target = new Date(now);
+            target.setHours(hours, mins, 0, 0);
+
+            // If target is in the past, assume next day
+            if (target <= now) {
+                target.setDate(target.getDate() + 1);
+            }
+
+            const diffMs = target - now;
+            const diffMins = Math.round(diffMs / 60000);
+
+            minsEl.value = diffMins;
+            setRegister(63, diffMins);
+            log(`Booking Charge set for ${target.toLocaleTimeString()} (${diffMins} mins)`);
+        }
+
+        // Debug Simulation
+        let mockRegs = new Uint8Array(200); // Simulate register space
+
+        function activateDebug() {
+            isDebug = true;
+            // Switch to Simulation View
+            switchView('simulation');
+            document.getElementById('sim-controls').style.display = 'block';
+            updateStatus(true);
+
+            // Init minimal useful regs
+            mockRegs[0] = 0x11;
+            mockRegs[1] = 0x04;
+            mockRegs[6 + 64 * 2] = 0; // Sound On by default
+
+            log("Simulation Started. Switch to 'Control' tab to see Dashboard.");
+
+            // Start simulation loop if not real connection
+            if (!device) {
+                if (window.simInterval) clearInterval(window.simInterval);
+                window.simInterval = setInterval(() => {
+                    if (!isDebug) return;
+                    const event = { target: { value: createMockPacket() } };
+                    handleNotification(event);
+                }, 2000);
+            }
+        }
+
+        // Mock Detect for Testing
+        function mockDetect(name) {
+            log(`Simulating connection to: ${name}`);
+            const upper = name.toUpperCase();
+            if (upper.includes('F3600')) {
+                settings.mainCap = 3840;
+                log("Auto-detected F3600 -> 3840Wh");
+            } else if (upper.includes('F2400')) {
+                settings.mainCap = 2048;
+                log("Auto-detected F2400 -> 2048Wh");
+            }
+            localStorage.setItem('fossibot-settings', JSON.stringify(settings));
+        }
+
+        function mockSimulate(reg, val) {
+            // Write to our mock register array
+            // Value is 16 bit, so split into 2 bytes
+            mockRegs[6 + reg * 2] = (val >> 8) & 0xff;
+            mockRegs[6 + reg * 2 + 1] = val & 0xff;
+
+            // Trigger immediate update
+            const event = { target: { value: createMockPacket() } };
+            handleNotification(event);
+            document.getElementById('log').textContent = `Set Reg ${reg} to ${val}`;
+        }
+
+        function closeDebug() {
+            document.getElementById('sim-controls').style.display = 'none';
+            isDebug = false;
+            log("Simulator stopped");
+            updateStatus(false);
+            if (window.simInterval) clearInterval(window.simInterval);
+        }
+
+        function createMockPacket() {
+            // Construct a packet that looks like the real device notification
+            // Header is 0x11, 0x04
+            mockRegs[0] = 0x11;
+            mockRegs[1] = 0x04;
+            return new DataView(mockRegs.buffer);
+        }
+
+        // Close Debug Console
+
+
+        // Appliance Calculator
+        const APPLIANCES = [
+            { name: 'Induction Hob', watts: 800, enabled: false },
+            { name: 'TV', watts: 100, enabled: false },
+            { name: 'LED Lights', watts: 10, enabled: false },
+            { name: 'Water Pump', watts: 40, enabled: false },
+            { name: '12V Fridge', watts: 90, enabled: false },
+            { name: 'Air Fryer', watts: 1500, enabled: false },
+            { name: 'Electric Heater', watts: 400, enabled: false },
+            { name: 'Phone Charger', watts: 15, enabled: false }
+        ];
+
+        function renderAppliances() {
+            const container = document.getElementById('appliance-list');
+            if (!container) return;
+            container.innerHTML = APPLIANCES.map((app, i) => `
+                <div style="display: flex; align-items: center; gap: 0.25rem;">
+                    <input type="checkbox" id="app-${i}" ${app.enabled ? 'checked' : ''} onchange="toggleAppliance(${i})">
+                    <label for="app-${i}" style="flex: 1;">${app.name}</label>
+                    <input type="number" value="${app.watts}" min="0" style="width: 50px; padding: 0.1rem; background: #111; color: #0f0; border: 1px solid #0f0; font-size: 0.7rem;" onchange="updateApplianceWatts(${i}, this.value)">W
+                </div>
+            `).join('');
+        }
+
+        function toggleAppliance(index) {
+            APPLIANCES[index].enabled = !APPLIANCES[index].enabled;
+            calculateRuntime();
+        }
+
+        function updateApplianceWatts(index, value) {
+            APPLIANCES[index].watts = parseInt(value) || 0;
+            calculateRuntime();
+        }
+
+        function calculateRuntime() {
+            const totalWatts = APPLIANCES.filter(a => a.enabled).reduce((sum, a) => sum + a.watts, 0);
+            document.getElementById('calc-total-watts').textContent = totalWatts;
+
+            if (totalWatts > 0) {
+                const batteryWh = settings.mainCap; // Use configured capacity
+                const batteryPercent = parseInt(document.getElementById('sim-battery')?.value || 100);
+                const availableWh = (batteryPercent / 100) * batteryWh * 0.85; // 85% efficiency
+                const hours = availableWh / totalWatts;
+                const h = Math.floor(hours);
+                const m = Math.round((hours - h) * 60);
+                document.getElementById('calc-runtime').textContent = `${h}h ${m}m`;
+            } else {
+                document.getElementById('calc-runtime').textContent = '--';
+            }
+        }
+
+        function updateSimulation() {
+            if (!isDebug) return;
+
+            const battery = parseInt(document.getElementById('sim-battery').value) || 0;
+            const input = parseInt(document.getElementById('sim-input').value) || 0;
+            const output = parseInt(document.getElementById('sim-output').value) || 0;
+            const sys = parseInt(document.getElementById('sim-sys').value) || 0;
+
+            // Calculate total watts and remaining minutes
+            const totalWatts = output + sys;
+            let minutes = 0;
+            if (totalWatts > 0) {
+                const availableWh = (battery / 100) * settings.mainCap * 0.85;
+                minutes = Math.round((availableWh / totalWatts) * 60);
+            }
+
+            // Update mock registers
+            mockRegs[6 + 56 * 2] = (battery * 10 >> 8) & 0xff;
+            mockRegs[6 + 56 * 2 + 1] = (battery * 10) & 0xff;
+            mockRegs[6 + 3 * 2] = (input >> 8) & 0xff;
+            mockRegs[6 + 3 * 2 + 1] = input & 0xff;
+            mockRegs[6 + 39 * 2] = (output >> 8) & 0xff;
+            mockRegs[6 + 39 * 2 + 1] = output & 0xff;
+            mockRegs[6 + 21 * 2] = (sys >> 8) & 0xff;
+            mockRegs[6 + 21 * 2 + 1] = sys & 0xff;
+            // Register 20: Total Watts
+            mockRegs[6 + 20 * 2] = (totalWatts >> 8) & 0xff;
+            mockRegs[6 + 20 * 2 + 1] = totalWatts & 0xff;
+            // Register 59: Minutes remaining
+            mockRegs[6 + 59 * 2] = (minutes >> 8) & 0xff;
+            mockRegs[6 + 59 * 2 + 1] = minutes & 0xff;
+
+            // Trigger UI update
+            const event = { target: { value: createMockPacket() } };
+            handleNotification(event);
+
+            calculateRuntime();
+        }
+
+        // Render appliances on load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAppliances();
+
+            // Ensure Pipboy is default theme
+            const savedTheme = localStorage.getItem('fossibot-theme');
+            if (!savedTheme) {
+                setTheme('pipboy');
+            }
+
+            // Robust Listener Attachment
+            const cBtns = document.querySelectorAll('.btn-connect');
+            console.log("Re-attaching listeners, count:", cBtns.length);
+            cBtns.forEach(btn => btn.addEventListener('click', connect));
+
+            // Initial Status Log
+            if (typeof log === 'function') log("System Ready. Click Connect.");
+        });
+    </script>
+</body>
+
+</html>
