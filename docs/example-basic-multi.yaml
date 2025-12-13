@@ -116,6 +116,15 @@ sensor:
     remaining_time:
       name: "B1 Remaining Minutes"
       id: b1_remaining_minutes
+    # Optional sensors for charge/discharge thresholds
+    threshold_charge:
+      name: "B1 Charge Threshold"
+      id: threshold_charge
+    threshold_discharge:
+      name: "B1 Discharge Threshold"
+      id: threshold_discharge
+    charge_level:
+      name: "B1 Charge Level"
   # Convert remaining time from minutes to hours
   - platform: template
     name: "B1 Remaining Hours"
@@ -170,6 +179,15 @@ sensor:
     remaining_time:
       name: "B2 Remaining Minutes"
       id: b2_remaining_minutes
+    # Optional sensors for charge/discharge thresholds
+    threshold_charge:
+      name: "B2 Charge Threshold"
+      id: threshold_charge
+    threshold_discharge:
+      name: "B2 Discharge Threshold"
+      id: threshold_discharge
+    charge_level:
+      name: "B2 Charge Level"
   # Convert remaining time from minutes to hours
   - platform: template
     name: "B2 Remaining Hours"
@@ -227,3 +245,34 @@ switch:
     light:
       name: "B2 Light"
       id: b2_light_switch
+
+# Number controls for charge/discharge thresholds
+number:
+  - platform: fbot
+    fbot_id: fbot_device_1
+    # Charge threshold: stop charging when battery reaches this level (60-100%)
+    threshold_charge:
+      name: "B1 Charge Max"
+      min_value: 60
+      max_value: 100
+      step: 1
+    # Discharge threshold: stop discharging when battery reaches this level (0-50%)
+    threshold_discharge:
+      name: "B1 Discharge Min"
+      min_value: 0
+      max_value: 50
+      step: 1
+  - platform: fbot
+    fbot_id: fbot_device_2
+    # Charge threshold: stop charging when battery reaches this level (60-100%)
+    threshold_charge:
+      name: "B2 Charge Max"
+      min_value: 60
+      max_value: 100
+      step: 1
+    # Discharge threshold: stop discharging when battery reaches this level (0-50%)
+    threshold_discharge:
+      name: "B2 Discharge Min"
+      min_value: 0
+      max_value: 50
+      step: 1
