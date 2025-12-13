@@ -42,10 +42,12 @@ ble_client:
 fbot:
   - id: fbot_device_1
     ble_client_id: ble_client_1
-    polling_interval: 5s  # How often to poll for updates (default: 5s)
+    polling_interval: 5s              # Status data (default: 2s)
+    settings_polling_interval: 30s    # Holding registers (default: 60s)
   - id: fbot_device_2
     ble_client_id: ble_client_2
-    polling_interval: 5s  # How often to poll for updates (default: 5s)
+    polling_interval: 5s              # Status data (default: 2s)
+    settings_polling_interval: 30s    # Holding registers (default: 60s)
 
 # Binary sensors for connection and output states
 binary_sensor:

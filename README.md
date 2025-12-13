@@ -90,8 +90,9 @@ ble_client:
 # Configure the Fbot component. This component will inherit the ble_client above.
 fbot:
   id: my_fbot
-  polling_interval: 5s  # How often to poll for updates (default: 2s)
-
+  polling_interval: 5s              # Status data (default: 2s)
+  settings_polling_interval: 30s    # Holding registers (default: 60s)
+  
 # Binary sensors for connection and output states
 binary_sensor:
   - platform: fbot
