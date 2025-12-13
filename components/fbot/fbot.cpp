@@ -410,12 +410,20 @@ void Fbot::parse_settings_notification(const uint8_t *data, uint16_t length) {
   float threshold_discharge = this->get_register(data, length, REG_THRESHOLD_DISCHARGE) / 10.0f;
   float threshold_charge = this->get_register(data, length, REG_THRESHOLD_CHARGE) / 10.0f;
   
-  // Publish threshold sensor values
+  // Publish threshold sensor values (read-only display)
   if (this->threshold_discharge_sensor_ != nullptr) {
     this->threshold_discharge_sensor_->publish_state(threshold_discharge);
   }
   if (this->threshold_charge_sensor_ != nullptr) {
     this->threshold_charge_sensor_->publish_state(threshold_charge);
+  }
+  
+  // Publish threshold number values (user-adjustable controls)
+  if (this->threshold_discharge_number_ != nullptr) {
+    this->threshold_discharge_number_->publish_state(threshold_discharge);
+  }
+  if (this->threshold_charge_number_ != nullptr) {
+    this->threshold_charge_number_->publish_state(threshold_charge);
   }
   
   ESP_LOGD(TAG, "Settings: Discharge threshold: %.1f%%, Charge threshold: %.1f%%", 

@@ -6,6 +6,7 @@
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/switch/switch.h"
+#include "esphome/components/number/number.h"
 
 #ifdef USE_ESP32
 
@@ -87,6 +88,10 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   void set_ac_switch(switch_::Switch *sw) { this->ac_switch_ = sw; }
   void set_light_switch(switch_::Switch *sw) { this->light_switch_ = sw; }
   
+  // Number setters
+  void set_threshold_charge_number(number::Number *num) { this->threshold_charge_number_ = num; }
+  void set_threshold_discharge_number(number::Number *num) { this->threshold_discharge_number_ = num; }
+  
   // Control methods for switches
   void control_usb(bool state);
   void control_dc(bool state);
@@ -148,6 +153,10 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   switch_::Switch *dc_switch_{nullptr};
   switch_::Switch *ac_switch_{nullptr};
   switch_::Switch *light_switch_{nullptr};
+  
+  // Numbers
+  number::Number *threshold_charge_number_{nullptr};
+  number::Number *threshold_discharge_number_{nullptr};
   
   // Protocol methods
   uint16_t calculate_checksum(const uint8_t *data, size_t len);
