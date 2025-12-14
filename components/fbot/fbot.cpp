@@ -435,6 +435,7 @@ void Fbot::parse_settings_notification(const uint8_t *data, uint16_t length) {
     this->threshold_charge_sensor_->publish_state(threshold_charge);
   }
   
+#ifdef USE_NUMBER
   // Publish threshold number values (user-adjustable controls)
   if (this->threshold_discharge_number_ != nullptr) {
     this->threshold_discharge_number_->publish_state(threshold_discharge);
@@ -442,6 +443,7 @@ void Fbot::parse_settings_notification(const uint8_t *data, uint16_t length) {
   if (this->threshold_charge_number_ != nullptr) {
     this->threshold_charge_number_->publish_state(threshold_charge);
   }
+#endif
   
   ESP_LOGD(TAG, "Settings: Discharge threshold: %.1f%%, Charge threshold: %.1f%%", 
            threshold_discharge, threshold_charge);
