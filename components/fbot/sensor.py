@@ -20,6 +20,7 @@ DEPENDENCIES = ["fbot"]
 
 CONF_INPUT_POWER = "input_power"
 CONF_AC_INPUT_POWER = "ac_input_power"
+CONF_DC_INPUT_POWER = "dc_input_power"
 CONF_OUTPUT_POWER = "output_power"
 CONF_SYSTEM_POWER = "system_power"
 CONF_TOTAL_POWER = "total_power"
@@ -58,6 +59,12 @@ CONFIG_SCHEMA = cv.Schema(
             state_class=STATE_CLASS_MEASUREMENT,
         ),
         cv.Optional(CONF_AC_INPUT_POWER): sensor.sensor_schema(
+            unit_of_measurement=UNIT_WATT,
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_POWER,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_DC_INPUT_POWER): sensor.sensor_schema(
             unit_of_measurement=UNIT_WATT,
             accuracy_decimals=0,
             device_class=DEVICE_CLASS_POWER,
@@ -128,6 +135,10 @@ async def to_code(config):
     if CONF_AC_INPUT_POWER in config:
         sens = await sensor.new_sensor(config[CONF_AC_INPUT_POWER])
         cg.add(parent.set_ac_input_power_sensor(sens))
+    
+    if CONF_DC_INPUT_POWER in config:
+        sens = await sensor.new_sensor(config[CONF_DC_INPUT_POWER])
+        cg.add(parent.set_dc_input_power_sensor(sens))
     
     if CONF_OUTPUT_POWER in config:
         sens = await sensor.new_sensor(config[CONF_OUTPUT_POWER])
