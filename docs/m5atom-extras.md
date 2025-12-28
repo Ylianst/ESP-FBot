@@ -2,7 +2,7 @@
 
 ![M5Atom Button Image](https://raw.githubusercontent.com/Ylianst/ESP-FBot/refs/heads/main/docs/images/atom-button.png)
 
-If you happen to be using a [M5Stack ATOM Light](https://shop.m5stack.com/products/atom-lite-esp32-development-kit) as your ESP32 device, there is an extra fun trick you can add to make this integration even more useful. There is a button on the ATOM you can configure to toggle one of the functions on the battery and this will work even of Home Assistant is offline.
+If you happen to be using a [M5Stack ATOM Light](https://shop.m5stack.com/products/atom-lite-esp32-development-kit) as your ESP32 device, there is an extra fun trick you can add to make this integration even more useful. There is a button on the ATOM you can configure to toggle one of the functions on the battery and this will work even of Home Assistant is offline. With this configuration, the M5Atom will also act as a bride for Home Assistant to read the power station's state over WIFI.
 
 ## Button Configuration
 
