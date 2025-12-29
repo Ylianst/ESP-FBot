@@ -66,6 +66,11 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   void set_threshold_charge_sensor(sensor::Sensor *sensor) { this->threshold_charge_sensor_ = sensor; }
   void set_threshold_discharge_sensor(sensor::Sensor *sensor) { this->threshold_discharge_sensor_ = sensor; }
   void set_charge_level_sensor(sensor::Sensor *sensor) { this->charge_level_sensor_ = sensor; }
+  void set_ac_out_voltage_sensor(sensor::Sensor *sensor) { this->ac_out_voltage_sensor_ = sensor; }
+  void set_ac_out_frequency_sensor(sensor::Sensor *sensor) { this->ac_out_frequency_sensor_ = sensor; }
+  void set_ac_in_frequency_sensor(sensor::Sensor *sensor) { this->ac_in_frequency_sensor_ = sensor; }
+  void set_time_to_full_sensor(sensor::Sensor *sensor) { this->time_to_full_sensor_ = sensor; }
+  void set_time_to_empty_sensor(sensor::Sensor *sensor) { this->time_to_empty_sensor_ = sensor; }
   
   // Binary sensor setters
   void set_connected_binary_sensor(binary_sensor::BinarySensor *sensor) { 
@@ -153,6 +158,11 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   sensor::Sensor *threshold_charge_sensor_{nullptr};
   sensor::Sensor *threshold_discharge_sensor_{nullptr};
   sensor::Sensor *charge_level_sensor_{nullptr};
+  sensor::Sensor *ac_out_voltage_sensor_{nullptr};
+  sensor::Sensor *ac_out_frequency_sensor_{nullptr};
+  sensor::Sensor *ac_in_frequency_sensor_{nullptr};
+  sensor::Sensor *time_to_full_sensor_{nullptr};
+  sensor::Sensor *time_to_empty_sensor_{nullptr};
   
   // Binary sensors
   binary_sensor::BinarySensor *connected_binary_sensor_{nullptr};

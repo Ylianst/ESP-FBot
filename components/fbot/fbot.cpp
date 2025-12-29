@@ -65,6 +65,11 @@ void Fbot::dump_config() {
   LOG_SENSOR("  ", "Charge Threshold", this->threshold_charge_sensor_);
   LOG_SENSOR("  ", "Discharge Threshold", this->threshold_discharge_sensor_);
   LOG_SENSOR("  ", "Charge Level", this->charge_level_sensor_);
+  LOG_SENSOR("  ", "AC Out Voltage", this->ac_out_voltage_sensor_);
+  LOG_SENSOR("  ", "AC Out Frequency", this->ac_out_frequency_sensor_);
+  LOG_SENSOR("  ", "AC In Frequency", this->ac_in_frequency_sensor_);
+  LOG_SENSOR("  ", "Time to Full", this->time_to_full_sensor_);
+  LOG_SENSOR("  ", "Time to Empty", this->time_to_empty_sensor_);
   LOG_BINARY_SENSOR("  ", "Connected", this->connected_binary_sensor_);
   LOG_BINARY_SENSOR("  ", "Battery S1 Connected", this->battery_connected_s1_binary_sensor_);
   LOG_BINARY_SENSOR("  ", "Battery S2 Connected", this->battery_connected_s2_binary_sensor_);
@@ -330,12 +335,20 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   uint16_t ac_input_watts = this->get_register(data, length, 3);
   uint16_t dc_input_watts = this->get_register(data, length, 4);
   uint16_t input_watts = this->get_register(data, length, 6);
-  uint16_t output_watts = this->get_register(data, length, 39);
-  uint16_t system_watts = this->get_register(data, length, 21);
   uint16_t total_watts = this->get_register(data, length, 20);
-  uint16_t remaining_minutes = this->get_register(data, length, 59);
+  uint16_t system_watts = this->get_register(data, length, 21);
+  uint16_t output_watts = this->get_register(data, length, 39);
   uint16_t state_flags = this->get_register(data, length, 41);
-
+  
+  // New sensors
+  float ac_out_voltage = this->get_register(data, length, 18) * 0.01f;
+  float ac_out_frequency = this->get_register(data, length, 19) * 0.01f;
+  float ac_in_frequency = this->get_register(data, length, 22) * 0.001f;
+  uint16_t time_to_full = this->get_register(data, length, 58);
+  uint16_t time_to_empty = this->get_register(data, length, 59);
+  
+  uint16_t remaining_minutes = time_to_empty; // Keep backward compatibility
+  
   // Publish sensor values
   if (this->battery_percent_sensor_ != nullptr) {
     this->battery_percent_sensor_->publish_state(battery_percent);
@@ -369,6 +382,21 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   }
   if (this->charge_level_sensor_ != nullptr) {
     this->charge_level_sensor_->publish_state(charge_level_watts);
+  }
+  if (this->ac_out_voltage_sensor_ != nullptr) {
+    this->ac_out_voltage_sensor_->publish_state(ac_out_voltage);
+  }
+  if (this->ac_out_frequency_sensor_ != nullptr) {
+    this->ac_out_frequency_sensor_->publish_state(ac_out_frequency);
+  }
+  if (this->ac_in_frequency_sensor_ != nullptr) {
+    this->ac_in_frequency_sensor_->publish_state(ac_in_frequency);
+  }
+  if (this->time_to_full_sensor_ != nullptr) {
+    this->time_to_full_sensor_->publish_state(time_to_full);
+  }
+  if (this->time_to_empty_sensor_ != nullptr) {
+    this->time_to_empty_sensor_->publish_state(time_to_empty);
   }
 
   // Update binary sensors for battery connection status
@@ -586,6 +614,21 @@ void Fbot::reset_sensors_to_unknown() {
   }
   if (this->charge_level_sensor_ != nullptr) {
     this->charge_level_sensor_->publish_state(NAN);
+  }
+  if (this->ac_out_voltage_sensor_ != nullptr) {
+    this->ac_out_voltage_sensor_->publish_state(NAN);
+  }
+  if (this->ac_out_frequency_sensor_ != nullptr) {
+    this->ac_out_frequency_sensor_->publish_state(NAN);
+  }
+  if (this->ac_in_frequency_sensor_ != nullptr) {
+    this->ac_in_frequency_sensor_->publish_state(NAN);
+  }
+  if (this->time_to_full_sensor_ != nullptr) {
+    this->time_to_full_sensor_->publish_state(NAN);
+  }
+  if (this->time_to_empty_sensor_ != nullptr) {
+    this->time_to_empty_sensor_->publish_state(NAN);
   }
   
   // Reset binary sensors for output states to unknown

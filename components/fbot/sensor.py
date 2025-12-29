@@ -8,11 +8,15 @@ from esphome.const import (
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_DURATION,
+    DEVICE_CLASS_VOLTAGE,
+    DEVICE_CLASS_FREQUENCY,
     STATE_CLASS_MEASUREMENT,
     UNIT_PERCENT,
     UNIT_WATT,
     UNIT_KILOWATT_HOURS,
     UNIT_MINUTE,
+    UNIT_VOLT,
+    UNIT_HERTZ,
 )
 from . import fbot_ns, Fbot, CONF_FBOT_ID
 
@@ -30,6 +34,11 @@ CONF_BATTERY_S2_LEVEL = "battery_s2_level"
 CONF_THRESHOLD_CHARGE = "threshold_charge"
 CONF_THRESHOLD_DISCHARGE = "threshold_discharge"
 CONF_CHARGE_LEVEL = "charge_level"
+CONF_AC_OUT_VOLTAGE = "ac_out_voltage"
+CONF_AC_OUT_FREQUENCY = "ac_out_frequency"
+CONF_AC_IN_FREQUENCY = "ac_in_frequency"
+CONF_TIME_TO_FULL = "time_to_full"
+CONF_TIME_TO_EMPTY = "time_to_empty"
 
 CONFIG_SCHEMA = cv.Schema(
     {
@@ -110,6 +119,36 @@ CONFIG_SCHEMA = cv.Schema(
             device_class=DEVICE_CLASS_POWER,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
+        cv.Optional(CONF_AC_OUT_VOLTAGE): sensor.sensor_schema(
+            unit_of_measurement=UNIT_VOLT,
+            accuracy_decimals=2,
+            device_class=DEVICE_CLASS_VOLTAGE,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_AC_OUT_FREQUENCY): sensor.sensor_schema(
+            unit_of_measurement=UNIT_HERTZ,
+            accuracy_decimals=2,
+            device_class=DEVICE_CLASS_FREQUENCY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_AC_IN_FREQUENCY): sensor.sensor_schema(
+            unit_of_measurement=UNIT_HERTZ,
+            accuracy_decimals=3,
+            device_class=DEVICE_CLASS_FREQUENCY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_TIME_TO_FULL): sensor.sensor_schema(
+            unit_of_measurement=UNIT_MINUTE,
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_DURATION,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_TIME_TO_EMPTY): sensor.sensor_schema(
+            unit_of_measurement=UNIT_MINUTE,
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_DURATION,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
     }
 )
 
@@ -167,3 +206,23 @@ async def to_code(config):
     if CONF_CHARGE_LEVEL in config:
         sens = await sensor.new_sensor(config[CONF_CHARGE_LEVEL])
         cg.add(parent.set_charge_level_sensor(sens))
+
+    if CONF_AC_OUT_VOLTAGE in config:
+        sens = await sensor.new_sensor(config[CONF_AC_OUT_VOLTAGE])
+        cg.add(parent.set_ac_out_voltage_sensor(sens))
+
+    if CONF_AC_OUT_FREQUENCY in config:
+        sens = await sensor.new_sensor(config[CONF_AC_OUT_FREQUENCY])
+        cg.add(parent.set_ac_out_frequency_sensor(sens))
+
+    if CONF_AC_IN_FREQUENCY in config:
+        sens = await sensor.new_sensor(config[CONF_AC_IN_FREQUENCY])
+        cg.add(parent.set_ac_in_frequency_sensor(sens))
+
+    if CONF_TIME_TO_FULL in config:
+        sens = await sensor.new_sensor(config[CONF_TIME_TO_FULL])
+        cg.add(parent.set_time_to_full_sensor(sens))
+
+    if CONF_TIME_TO_EMPTY in config:
+        sens = await sensor.new_sensor(config[CONF_TIME_TO_EMPTY])
+        cg.add(parent.set_time_to_empty_sensor(sens))
