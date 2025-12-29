@@ -150,6 +150,14 @@ sensor:
     remaining_time:
       name: "Remaining Minutes"
       id: remaining_minutes
+    ac_out_voltage:
+      name: "AC Output Voltage"
+    ac_out_frequency:
+      name: "AC Output Frequency"
+    ac_in_frequency:
+      name: "AC Input Frequency"
+    time_to_full:
+      name: "Time to Full Charge"
     # Optional sensors for charge/discharge thresholds
     threshold_charge:
       name: "Charge Threshold"
