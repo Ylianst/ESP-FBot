@@ -340,7 +340,7 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   uint16_t state_flags = this->get_register(data, length, 41);
   
   // New sensors
-  float ac_out_voltage = this->get_register(data, length, 18) * 0.01f;
+  float ac_out_voltage = this->get_register(data, length, 18) * 0.1f;
   float ac_out_frequency = this->get_register(data, length, 19) * 0.1f;
   float ac_in_frequency = this->get_register(data, length, 22) * 0.01f;
   uint16_t time_to_full = this->get_register(data, length, 58);
