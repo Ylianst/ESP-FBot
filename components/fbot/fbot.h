@@ -134,7 +134,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   void set_threshold_discharge(float percent);
   
   // WiFi configuration method
-  void set_wifi_credentials(const std::string &ssid, const std::string &password);
+  void set_wifi_credentials(char *ssid, char *password);
 
   // Connection state getter
   bool is_connected() const { return connected_; }
