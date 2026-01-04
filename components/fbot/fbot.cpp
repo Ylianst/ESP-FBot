@@ -495,7 +495,7 @@ void Fbot::parse_settings_notification(const uint8_t *data, uint16_t length) {
     this->key_sound_switch_->publish_state(key_sound_state);
   }
   
-  // Parse Light Mode state (register 27: 0=Off, 1=On, 2=Flashing, 3=SOS)
+  // Parse Light Mode state (register 27: 0=Off, 1=On, 2=SOS, 3=Flashing)
   uint16_t light_mode_value = this->get_register(data, length, REG_LIGHT_CONTROL);
   
 #ifdef USE_SELECT
@@ -505,8 +505,8 @@ void Fbot::parse_settings_notification(const uint8_t *data, uint16_t length) {
     switch (light_mode_value) {
       case 0: light_mode = "Off"; break;
       case 1: light_mode = "On"; break;
-      case 2: light_mode = "Flashing"; break;
-      case 3: light_mode = "SOS"; break;
+      case 2: light_mode = "SOS"; break;
+      case 3: light_mode = "Flashing"; break;
       default: light_mode = "Off"; break;
     }
     this->light_mode_select_->publish_state(light_mode);
