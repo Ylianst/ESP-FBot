@@ -28,6 +28,7 @@ static const uint8_t REG_USB_CONTROL = 24;
 static const uint8_t REG_DC_CONTROL = 25;
 static const uint8_t REG_AC_CONTROL = 26;
 static const uint8_t REG_LIGHT_CONTROL = 27;
+static const uint8_t REG_KEY_SOUND = 56;
 static const uint8_t REG_AC_SILENT_CONTROL = 57;
 static const uint8_t REG_THRESHOLD_DISCHARGE = 66;
 static const uint8_t REG_THRESHOLD_CHARGE = 67;
@@ -100,6 +101,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   void set_ac_switch(switch_::Switch *sw) { this->ac_switch_ = sw; }
   void set_light_switch(switch_::Switch *sw) { this->light_switch_ = sw; }
   void set_ac_silent_switch(switch_::Switch *sw) { this->ac_silent_switch_ = sw; }
+  void set_key_sound_switch(switch_::Switch *sw) { this->key_sound_switch_ = sw; }
   
 #ifdef USE_NUMBER
   // Number setters
@@ -113,6 +115,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   void control_ac(bool state);
   void control_light(bool state);
   void control_ac_silent(bool state);
+  void control_key_sound(bool state);
 
   // Control methods for thresholds
   void set_threshold_charge(float percent);
@@ -177,6 +180,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   switch_::Switch *ac_switch_{nullptr};
   switch_::Switch *light_switch_{nullptr};
   switch_::Switch *ac_silent_switch_{nullptr};
+  switch_::Switch *key_sound_switch_{nullptr};
   
 #ifdef USE_NUMBER
   // Numbers

@@ -338,8 +338,6 @@ void Fbot::parse_notification(const uint8_t *data, uint16_t length) {
   uint16_t system_watts = this->get_register(data, length, 21);
   uint16_t output_watts = this->get_register(data, length, 39);
   uint16_t state_flags = this->get_register(data, length, 41);
-  
-  // New sensors
   float ac_out_voltage = this->get_register(data, length, 18) * 0.1f;
   float ac_out_frequency = this->get_register(data, length, 19) * 0.1f;
   float ac_in_frequency = this->get_register(data, length, 22) * 0.01f;
@@ -457,6 +455,14 @@ void Fbot::parse_settings_notification(const uint8_t *data, uint16_t length) {
     this->ac_silent_switch_->publish_state(ac_silent_state);
   }
   
+  // Parse Key Sound state (register 56: 0=off, 1=on)
+  bool key_sound_state = this->get_register(data, length, REG_KEY_SOUND) == 1;
+  
+  // Sync Key Sound switch state with device
+  if (this->key_sound_switch_ != nullptr) {
+    this->key_sound_switch_->publish_state(key_sound_state);
+  }
+  
   // Parse threshold registers (66 and 67 from holding registers)
   // Values are in permille (divide by 10 for percentage)
   float threshold_discharge = this->get_register(data, length, REG_THRESHOLD_DISCHARGE) / 10.0f;
@@ -480,8 +486,8 @@ void Fbot::parse_settings_notification(const uint8_t *data, uint16_t length) {
   }
 #endif
   
-  ESP_LOGD(TAG, "Settings: Discharge threshold: %.1f%%, Charge threshold: %.1f%%, AC Silent: %d", 
-           threshold_discharge, threshold_charge, ac_silent_state);
+  ESP_LOGD(TAG, "Settings: Discharge threshold: %.1f%%, Charge threshold: %.1f%%, AC Silent: %d, Key Sound: %d", 
+           threshold_discharge, threshold_charge, ac_silent_state, key_sound_state);
 }
 
 void Fbot::update_connected_state(bool state) {
@@ -512,6 +518,17 @@ void Fbot::control_ac_silent(bool state) {
   // AC Silent uses holding register 57 (settings register)
   // Function code 0x06 (Write Single Register) writes to holding registers
   this->send_control_command(REG_AC_SILENT_CONTROL, state ? 1 : 0);
+  
+  // Request settings update to confirm the change
+  this->set_timeout(500, [this]() { 
+    this->send_settings_request(); 
+  });
+}
+
+void Fbot::control_key_sound(bool state) {
+  // Key Sound uses holding register 56 (settings register)
+  // Function code 0x06 (Write Single Register) writes to holding registers
+  this->send_control_command(REG_KEY_SOUND, state ? 1 : 0);
   
   // Request settings update to confirm the change
   this->set_timeout(500, [this]() { 
