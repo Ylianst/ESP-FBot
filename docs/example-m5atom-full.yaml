@@ -275,20 +275,3 @@ number:
       min_value: 0
       max_value: 50
       step: 1
-
-# Number controls for charge/discharge thresholds
-number:
-  - platform: fbot
-    fbot_id: my_fbot
-    # Charge threshold: stop charging when battery reaches this level (60-100%)
-    threshold_charge:
-      name: "Charge Max"
-      min_value: 60
-      max_value: 100
-      step: 1
-    # Discharge threshold: stop discharging when battery reaches this level (0-50%)
-    threshold_discharge:
-      name: "Discharge Min"
-      min_value: 0
-      max_value: 50
-      step: 1
