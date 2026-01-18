@@ -20,7 +20,7 @@
 #include <esp_gattc_api.h>
 
 namespace esphome {
-namespace fbot {
+namespace fbot_dev {
 
 // BLE Service and Characteristic UUIDs
 static const char *const SERVICE_UUID = "0000a002-0000-1000-8000-00805f9b34fb";
@@ -242,7 +242,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
   void check_poll_timeout();
 };
 
-}  // namespace fbot
+}  // namespace fbot_dev
 }  // namespace esphome
 
 #endif  // USE_ESP32

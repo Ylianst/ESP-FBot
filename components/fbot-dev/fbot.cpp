@@ -5,9 +5,9 @@
 #ifdef USE_ESP32
 
 namespace esphome {
-namespace fbot {
+namespace fbot_dev {
 
-static const char *const TAG = "fbot";
+static const char *const TAG = "fbot_dev";
 
 void Fbot::setup() {
   ESP_LOGCONFIG(TAG, "Setting up Fbot...");
@@ -820,7 +820,7 @@ void Fbot::reset_sensors_to_unknown() {
   }
 }
 
-}  // namespace fbot
+}  // namespace fbot_dev
 }  // namespace esphome
 
 #endif  // USE_ESP32

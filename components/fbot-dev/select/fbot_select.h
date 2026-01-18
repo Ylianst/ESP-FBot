@@ -7,7 +7,7 @@
 #ifdef USE_ESP32
 
 namespace esphome {
-namespace fbot {
+namespace fbot_dev {
 
 class FbotSelect : public select::Select, public Component {
  public:
@@ -23,7 +23,7 @@ class FbotSelect : public select::Select, public Component {
   std::string select_type_;
 };
 
-}  // namespace fbot
+}  // namespace fbot_dev
 }  // namespace esphome
 
 #endif  // USE_ESP32

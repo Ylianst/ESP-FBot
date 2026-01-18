@@ -7,7 +7,7 @@
 #ifdef USE_ESP32
 
 namespace esphome {
-namespace fbot {
+namespace fbot_dev {
 
 class FbotNumber : public number::Number, public Component {
  public:
@@ -24,7 +24,7 @@ class FbotNumber : public number::Number, public Component {
   std::string number_type_;
 };
 
-}  // namespace fbot
+}  // namespace fbot_dev
 }  // namespace esphome
 
 #endif  // USE_ESP32

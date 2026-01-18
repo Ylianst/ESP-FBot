@@ -4,7 +4,7 @@ from esphome.components import select
 from esphome.const import CONF_ID, CONF_ICON
 from .. import fbot_ns, Fbot, CONF_FBOT_ID
 
-DEPENDENCIES = ["fbot"]
+DEPENDENCIES = ["fbot_dev"]
 
 CONF_LIGHT_MODE = "light_mode"
 

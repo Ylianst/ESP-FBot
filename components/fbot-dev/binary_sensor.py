@@ -4,7 +4,7 @@ from esphome.components import binary_sensor
 from esphome.const import CONF_ID, DEVICE_CLASS_CONNECTIVITY, CONF_ICON
 from . import fbot_ns, Fbot, CONF_FBOT_ID
 
-DEPENDENCIES = ["fbot"]
+DEPENDENCIES = ["fbot_dev"]
 
 CONF_CONNECTED = "connected"
 CONF_BATTERY_CONNECTED_S1 = "battery_connected_s1"

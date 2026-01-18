@@ -7,7 +7,7 @@
 #ifdef USE_ESP32
 
 namespace esphome {
-namespace fbot {
+namespace fbot_dev {
 
 class FbotSwitch : public switch_::Switch, public Component {
  public:
@@ -24,7 +24,7 @@ class FbotSwitch : public switch_::Switch, public Component {
   std::string switch_type_;
 };
 
-}  // namespace fbot
+}  // namespace fbot_dev
 }  // namespace esphome
 
 #endif  // USE_ESP32

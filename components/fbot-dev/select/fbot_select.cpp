@@ -4,9 +4,9 @@
 #ifdef USE_ESP32
 
 namespace esphome {
-namespace fbot {
+namespace fbot_dev {
 
-static const char *const TAG = "fbot.select";
+static const char *const TAG = "fbot_dev.select";
 
 void FbotSelect::setup() {
   // Select starts with no option selected
@@ -41,7 +41,7 @@ void FbotSelect::control(const std::string &value) {
   this->publish_state(value);
 }
 
-}  // namespace fbot
+}  // namespace fbot_dev
 }  // namespace esphome
 
 #endif  // USE_ESP32

@@ -4,9 +4,9 @@
 #ifdef USE_ESP32
 
 namespace esphome {
-namespace fbot {
+namespace fbot_dev {
 
-static const char *const TAG = "fbot.switch";
+static const char *const TAG = "fbot_dev.switch";
 
 void FbotSwitch::setup() {
   // Switches start in unknown state
@@ -55,7 +55,7 @@ void FbotSwitch::write_state(bool state) {
   this->publish_state(state);
 }
 
-}  // namespace fbot
+}  // namespace fbot_dev
 }  // namespace esphome
 
 #endif  // USE_ESP32

@@ -20,7 +20,7 @@ from esphome.const import (
 )
 from . import fbot_ns, Fbot, CONF_FBOT_ID
 
-DEPENDENCIES = ["fbot"]
+DEPENDENCIES = ["fbot_dev"]
 
 CONF_INPUT_POWER = "input_power"
 CONF_AC_INPUT_POWER = "ac_input_power"

@@ -4,7 +4,7 @@ from esphome.components import switch
 from esphome.const import CONF_ID, CONF_ICON
 from .. import fbot_ns, Fbot, CONF_FBOT_ID
 
-DEPENDENCIES = ["fbot"]
+DEPENDENCIES = ["fbot_dev"]
 
 CONF_USB = "usb"
 CONF_DC = "dc"

@@ -11,7 +11,7 @@ from esphome.const import (
 )
 from .. import fbot_ns, Fbot, CONF_FBOT_ID
 
-DEPENDENCIES = ["fbot"]
+DEPENDENCIES = ["fbot_dev"]
 
 CONF_THRESHOLD_CHARGE = "threshold_charge"
 CONF_THRESHOLD_DISCHARGE = "threshold_discharge"

@@ -4,9 +4,9 @@
 #ifdef USE_ESP32
 
 namespace esphome {
-namespace fbot {
+namespace fbot_dev {
 
-static const char *const TAG = "fbot.number";
+static const char *const TAG = "fbot_dev.number";
 
 void FbotNumber::setup() {
   // Numbers start with no value until first update
@@ -45,7 +45,7 @@ void FbotNumber::control(float value) {
   this->publish_state(value);
 }
 
-}  // namespace fbot
+}  // namespace fbot_dev
 }  // namespace esphome
 
 #endif  // USE_ESP32
