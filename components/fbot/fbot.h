@@ -42,6 +42,7 @@ static const uint8_t REG_KEY_SOUND = 56;
 static const uint8_t REG_AC_SILENT_CONTROL = 57;
 static const uint8_t REG_THRESHOLD_DISCHARGE = 66;
 static const uint8_t REG_THRESHOLD_CHARGE = 67;
+static const uint8_t REG_AC_CHARGE_LIMIT = 13;
 
 // State flag bit masks for register 41
 static const uint16_t STATE_USB_BIT = 512;   // bit 9
@@ -122,6 +123,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
 #ifdef USE_SELECT
   // Select setters
   void set_light_mode_select(select::Select *sel) { this->light_mode_select_ = sel; }
+  void set_ac_charge_limit_select(select::Select *sel) { this->ac_charge_limit_select_ = sel; }
 #endif
   
 #ifdef USE_NUMBER
@@ -140,6 +142,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
 
   // Control methods for selects
   void control_light_mode(const std::string &value);
+  void control_ac_charge_limit(const std::string &value);
 
   // Control methods for thresholds
   void set_threshold_charge(float percent);
@@ -224,6 +227,7 @@ class Fbot : public esphome::ble_client::BLEClientNode, public Component {
 #ifdef USE_SELECT
   // Selects
   select::Select *light_mode_select_{nullptr};
+  select::Select *ac_charge_limit_select_{nullptr};
 #endif
   
   // Protocol methods

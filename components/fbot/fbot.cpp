@@ -512,6 +512,18 @@ void Fbot::parse_settings_notification(const uint8_t *data, uint16_t length) {
     }
     this->light_mode_select_->publish_state(light_mode);
   }
+  
+  // Parse AC Charge Limit state (register 13: values 1-5)
+  uint16_t ac_charge_limit_value = this->get_register(data, length, REG_AC_CHARGE_LIMIT);
+  
+  // Sync AC Charge Limit select state with device
+  if (this->ac_charge_limit_select_ != nullptr && ac_charge_limit_value >= 1 && ac_charge_limit_value <= 5) {
+    auto options = this->ac_charge_limit_select_->traits.get_options();
+    size_t index = ac_charge_limit_value - 1;  // Convert register value (1-5) to index (0-4)
+    if (index < options.size()) {
+      this->ac_charge_limit_select_->publish_state(options[index]);
+    }
+  }
 #endif
   
   // Parse threshold registers (66 and 67 from holding registers)
@@ -589,6 +601,42 @@ void Fbot::control_light_mode(const std::string &value) {
   if (this->light_switch_ != nullptr) {
     this->light_switch_->publish_state(mode_value != 0);
   }
+}
+
+void Fbot::control_ac_charge_limit(const std::string &value) {
+#ifdef USE_SELECT
+  // Get the index of the selected option (0-4) and convert to register value (1-5)
+  if (this->ac_charge_limit_select_ == nullptr) {
+    ESP_LOGW(TAG, "AC Charge Limit select not configured");
+    return;
+  }
+  
+  auto options = this->ac_charge_limit_select_->traits.get_options();
+  for (size_t i = 0; i < options.size(); i++) {
+    if (options[i] == value) {
+      uint16_t reg_value = i + 1;  // Convert index (0-4) to register value (1-5)
+      
+      // Validate register value is within allowed range (1-5)
+      if (reg_value < 1 || reg_value > 5) {
+        ESP_LOGW(TAG, "Invalid AC Charge Limit value: %d (must be 1-5)", reg_value);
+        return;
+      }
+      
+      ESP_LOGI(TAG, "Setting AC Charge Limit to: %s (value: %d)", value.c_str(), reg_value);
+      this->send_control_command(REG_AC_CHARGE_LIMIT, reg_value);
+      
+      // Request settings update to confirm the change
+      this->set_timeout(500, [this]() { 
+        this->send_settings_request(); 
+      });
+      return;
+    }
+  }
+  
+  ESP_LOGW(TAG, "Unknown AC Charge Limit option: %s", value.c_str());
+#else
+  ESP_LOGW(TAG, "Select component not enabled");
+#endif
 }
 
 void Fbot::control_ac_silent(bool state) {
