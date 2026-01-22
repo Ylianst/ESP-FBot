@@ -110,7 +110,7 @@ sensor:
       name: "B1 DC Input Power"
       id: b1_dc_input_watts
     input_power:
-      name: "B2 Total Input Power"
+      name: "B1 Total Input Power"
       id: b1_input_watts
     output_power:
       name: "B1 Output Power"
@@ -127,10 +127,10 @@ sensor:
     # Optional sensors for charge/discharge thresholds
     threshold_charge:
       name: "B1 Charge Threshold"
-      id: threshold_charge
+      id: b1_threshold_charge
     threshold_discharge:
       name: "B1 Discharge Threshold"
-      id: threshold_discharge
+      id: b1_threshold_discharge
     charge_level:
       name: "B1 Charge Level"
   # Convert remaining time from minutes to hours
@@ -196,10 +196,10 @@ sensor:
     # Optional sensors for charge/discharge thresholds
     threshold_charge:
       name: "B2 Charge Threshold"
-      id: threshold_charge
+      id: b2_threshold_charge
     threshold_discharge:
       name: "B2 Discharge Threshold"
-      id: threshold_discharge
+      id: b2_threshold_discharge
     charge_level:
       name: "B2 Charge Level"
   # Convert remaining time from minutes to hours
