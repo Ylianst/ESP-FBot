@@ -92,7 +92,7 @@ fbot:
   id: my_fbot
   polling_interval: 5s              # Status data (default: 2s)
   settings_polling_interval: 30s    # Holding registers (default: 60s)
-  poll_timeout: 10s                 # Time to wait for response (default 10s)
+  poll_timeout: 15s                 # Time to wait for response (default 15s)
   max_poll_failures: 5              # Failures before disconnect (default 3)
 
 # Binary sensors for connection and output states

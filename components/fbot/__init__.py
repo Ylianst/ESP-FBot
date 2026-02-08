@@ -24,7 +24,7 @@ CONFIG_SCHEMA = cv.All(
             cv.GenerateID(): cv.declare_id(Fbot),
             cv.Optional(CONF_POLLING_INTERVAL, default="2s"): cv.positive_time_period_milliseconds,
             cv.Optional(CONF_SETTINGS_POLLING_INTERVAL, default="60s"): cv.positive_time_period_milliseconds,
-            cv.Optional(CONF_POLL_TIMEOUT, default="10s"): cv.positive_time_period_milliseconds,
+            cv.Optional(CONF_POLL_TIMEOUT, default="15s"): cv.positive_time_period_milliseconds,
             cv.Optional(CONF_MAX_POLL_FAILURES, default=3): cv.int_range(min=1, max=10),
         }
     )
