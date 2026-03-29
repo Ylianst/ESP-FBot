@@ -26,6 +26,11 @@ It looks like the board is run by an ARM Cortex processor, but you can see that 
 
 <img src="images/board-debug-port.png" alt="AFERIY P310 Board Debug Port" width="400"/>
 
+Here is a IA guess at where the two main chips on the board are:
+
+- U11, GD32F303 series microcontroller (likely a GD32F303RBT6).
+- U14, GD32F130 series microcontroller (likely a GD32F130G6 in a 28-pin SOP package).
+
 This is typically a Serial Wire Debug (SWD) for ARM Cortex processors. It's typically used to flash and debug the ARM processor. On the top right of the motherboard is the ESP32 chip that does WIFI and Bluetooth. The 2.4Ghz antenna is the small wiggle in the black area.
 
 <img src="images/board-esp32.jpeg" alt="AFERIY P310 ESP32" width="400"/>
