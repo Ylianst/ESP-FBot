@@ -6,7 +6,7 @@ I have a AFERIY P310 that is stuck in a reboot loop, likely because a bad settin
 
 Obviously, this is a barrery with a lot of power and a huge inverter so, be super careful when doing this. The first step to to remove the top of the device. There are a set of rubber plugs and two rubber strips that are easy to remove. After that, remove all of the screws and remove the top of the device. I then removed the sides. The sides are a bit more difficult to remove as there are healed at two snap-in locations at the bottom. Once you know these locations it's easier to un-snap and pull up. There is the battery with the top and sides removed.
 
-![AFERIY P310 Opened up](https://raw.githubusercontent.com/Ylianst/ESP-FBot/refs/heads/main/internal/images/battery-opened.jpeg)
+![AFERIY P310 Opened up](https://github.com/Ylianst/ESP-FBot/blob/main/internals/images/battery-opened.jpeg)
 
 I kept a small bag with all of the screws. Luckly it's very clear what goes where. You can then easily pull the front motherboard out. If you take your voltmeter out and test around, you will see there are two bars that are exposed with 48v on them. So again, be super careful if you do this.
 
