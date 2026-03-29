@@ -14,11 +14,11 @@ I kept a small bag with all of the screws. Luckly it's very clear what goes wher
 
 There is while glue to make sure nothing gets disconnected during transport. You have to disconnect 3 white connectors and 1 power connection from the main board. Here is what it looks like:
 
-![AFERIY P310 Motherboard Image](https://github.com/Ylianst/ESP-FBot/blob/main/internals/images/board-top.jpeg)
+<img src="images/board-top.jpeg" alt="AFERIY P310 Motherboard Image" width="200"/>
 
 At the bottom of the board, I see the following indication:
 
-![AFERIY P310 Board Indication](https://github.com/Ylianst/ESP-FBot/blob/main/internals/images/board-top.jpeg)
+![AFERIY P310 Board Indication](https://github.com/Ylianst/ESP-FBot/blob/main/internals/images/board-number.png)
 
 It says "SYD-N051-DC-V1.5" on the first line and "20230915" on the second line. You can immidiately see that this is a board from [Shenzhen SYD Network Technology Co. Ltd.](https://sydpower.com/) and on their web site there is a range of batteries that you can get and brand anyway you like. This is the original source of the battery with AFERIY and others re-branding it.
 
