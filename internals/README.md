@@ -133,4 +133,211 @@ ESP: \r\nOK\r\n
 
 You can calculate the CRC using the [this CRC online calculator](https://www.codertools.net/tools/crc.php), you need to set the input format to "HEX" and CRC to "CRC-16/MODBUS". Then, paste the entire data packet except the last 2 bytes and you should get the last 2 bytes calculated correctly.
 
-The next step is to document the binary values, but this should match data we are collecting when talking over Bleutooth.
+## Binary Protocol
+
+The binary protocol used between the Bluetooth client and the power station is based on [Modbus RTU](https://en.wikipedia.org/wiki/Modbus). All commands use device address `0x11` and all multi-byte values are big-endian. Every command and response ends with a 2-byte CRC-16/Modbus checksum.
+
+### BLE Service and Characteristics
+
+The Bluetooth GATT service and characteristics used are:
+
+| UUID | Purpose |
+|------|---------|
+| `0000a002-0000-1000-8000-00805f9b34fb` | Service UUID |
+| `0000c304-0000-1000-8000-00805f9b34fb` | Write Characteristic (client → device) |
+| `0000c305-0000-1000-8000-00805f9b34fb` | Notify Characteristic (device → client) |
+
+The client writes commands to the Write Characteristic and receives responses as notifications on the Notify Characteristic.
+
+### Command Format
+
+All standard commands are 8 bytes:
+
+```
+[Address] [Function] [Byte 2] [Byte 3] [Byte 4] [Byte 5] [CRC High] [CRC Low]
+```
+
+- **Address** is always `0x11`.
+- **Function** is the Modbus function code.
+- **CRC** is CRC-16/Modbus over the first 6 bytes.
+
+### Response Format (168 bytes)
+
+All read responses are 168 bytes. The first 6 bytes echo the request header, followed by 80 registers (2 bytes each, big-endian), and a 2-byte CRC:
+
+```
+Bytes  0-5:    Header (echoes the request: address, function, start_reg_h, start_reg_l, num_regs_h, num_regs_l)
+Bytes  6-165:  Register data (80 registers × 2 bytes each, big-endian)
+Bytes  166-167: CRC-16/Modbus
+```
+
+To read register N from the response, read the 2-byte big-endian value at byte offset `6 + (N × 2)`.
+
+### Read Commands
+
+There are two read commands, both requesting 80 registers (0x50) starting from register 0:
+
+#### Read Status (Input Registers) — Function Code `0x04`
+
+Requests the live status of the power station (battery level, power in/out, active outputs, etc).
+
+```
+Write:    11 04 00 00 00 50 [CRC] [CRC]
+Response: 168 bytes (function code 0x04 in byte 1)
+```
+
+#### Read Settings (Holding Registers) — Function Code `0x03`
+
+Requests the device settings (thresholds, silent mode, key sound, light mode, etc).
+
+```
+Write:    11 03 00 00 00 50 [CRC] [CRC]
+Response: 168 bytes (function code 0x03 in byte 1)
+```
+
+### Write Command — Function Code `0x06`
+
+Writes a single 16-bit value to a register. Used to control outputs and change settings.
+
+```
+Write:    11 06 [REG_H] [REG_L] [VALUE_H] [VALUE_L] [CRC] [CRC]
+```
+
+For example, to turn the USB output on (register 24, value 1):
+
+```
+11 06 00 18 00 01 [CRC] [CRC]
+```
+
+After a write, the device responds with an updated 168-byte status notification.
+
+### WiFi Configuration Command — Function Code `0x07`
+
+This is a custom (non-standard Modbus) command used to set WiFi credentials on the device. It has a variable length:
+
+```
+[0x11] [0x07] [SSID_LEN] [PASS_LEN] [SSID bytes...] [PASS bytes...] [CRC_H] [CRC_L]
+```
+
+- **Byte 0**: Address (`0x11`)
+- **Byte 1**: Function code (`0x07`)
+- **Byte 2**: SSID length (1–255)
+- **Byte 3**: Password length (1–255)
+- **Bytes 4 to 4+SSID_LEN-1**: SSID string (ASCII, no null terminator)
+- **Next PASS_LEN bytes**: Password string (ASCII, no null terminator)
+- **Last 2 bytes**: CRC-16/Modbus over everything before the CRC
+
+### Status Registers (Function Code `0x04` Response)
+
+These are the registers parsed from the 168-byte status notification. Register data starts at byte offset 6 in the response.
+
+| Register | Description | Unit / Scaling | Notes |
+|----------|-------------|----------------|-------|
+| 2 | Charge Level | Raw 1–5 | 1=300W, 2=500W, 3=700W, 4=900W, 5=1100W |
+| 3 | AC Input Power | Watts (direct) | |
+| 4 | DC Input Power | Watts (direct) | |
+| 6 | Input Power | Watts (direct) | Total input |
+| 18 | AC Output Voltage | × 0.1 = Volts | e.g. 1200 → 120.0V |
+| 19 | AC Output Frequency | × 0.1 = Hz | e.g. 600 → 60.0 Hz |
+| 20 | Total Power | Watts (direct) | |
+| 21 | System Power | Watts (direct) | |
+| 22 | AC Input Frequency | × 0.01 = Hz | e.g. 6000 → 60.00 Hz |
+| 30 | USB-A1 Output Power | × 0.1 = Watts | |
+| 31 | USB-A2 Output Power | × 0.1 = Watts | |
+| 34 | USB-C1 Output Power | × 0.1 = Watts | |
+| 35 | USB-C2 Output Power | × 0.1 = Watts | |
+| 36 | USB-C3 Output Power | × 0.1 = Watts | |
+| 37 | USB-C4 Output Power | × 0.1 = Watts | |
+| 39 | Output Power | Watts (direct) | Total output |
+| 41 | State Flags | Bitmask | See bitmask table below |
+| 53 | Battery S1 Percent | ÷ 10 − 1 = % | 0 = disconnected (extra battery) |
+| 55 | Battery S2 Percent | ÷ 10 − 1 = % | 0 = disconnected (extra battery) |
+| 56 | Battery Percent | ÷ 10 = % | Main battery |
+| 58 | Time to Full | Minutes (direct) | 0 if not charging |
+| 59 | Remaining Time | Minutes (direct) | 0 if not discharging |
+
+#### State Flags (Register 41) Bitmask
+
+| Bit | Decimal | Description |
+|-----|---------|-------------|
+| 9 | 512 | USB output active |
+| 10 | 1024 | DC output active |
+| 11 | 2048 | AC output active |
+| 12 | 4096 | Light active |
+
+For example, a state flag value of `0x0E00` (3584 decimal = 512 + 1024 + 2048) means USB, DC, and AC outputs are all on.
+
+### Settings Registers (Function Code `0x03` Response)
+
+These are the registers parsed from the 168-byte settings notification.
+
+| Register | Description | Values / Scaling |
+|----------|-------------|-----------------|
+| 13 | AC Charge Limit | 1–5 (matches charge level options: 1=300W, 2=500W, 3=700W, 4=900W, 5=1100W) |
+| 27 | Light Mode | 0=Off, 1=On, 2=SOS, 3=Flashing |
+| 56 | Key Sound | 0=off, 1=on |
+| 57 | AC Silent Mode | 0=off, 1=on |
+| 66 | Discharge Threshold | ÷ 10 = % (e.g. 100 → 10%) |
+| 67 | Charge Threshold | ÷ 10 = % (e.g. 1000 → 100%) |
+
+### Writable Registers (Function Code `0x06`)
+
+These are the registers that can be written to control the device.
+
+| Register | Description | Valid Values |
+|----------|-------------|-------------|
+| 13 | AC Charge Limit | 1–5 |
+| 24 | USB Output | 0=off, 1=on |
+| 25 | DC Output | 0=off, 1=on |
+| 26 | AC Output | 0=off, 1=on |
+| 27 | Light Control | 0=Off, 1=On, 2=SOS, 3=Flashing |
+| 56 | Key Sound | 0=off, 1=on |
+| 57 | AC Silent Mode | 0=off, 1=on |
+| 66 | Discharge Threshold | 0–500 (in permille, divide by 10 for percent) |
+| 67 | Charge Threshold | 100–1000 (in permille, divide by 10 for percent) |
+
+### CRC-16/Modbus Checksum
+
+All commands and responses use CRC-16/Modbus. The algorithm uses an initial value of `0xFFFF` and the polynomial `0xA001`:
+
+```
+crc = 0xFFFF
+for each byte in data:
+    crc = crc XOR byte
+    repeat 8 times:
+        if (crc AND 1):
+            crc = (crc >> 1) XOR 0xA001
+        else:
+            crc = crc >> 1
+```
+
+The resulting 2-byte CRC is appended big-endian (high byte first) to the command. You can verify checksums using the [CRC online calculator](https://www.codertools.net/tools/crc.php) by setting the input format to "HEX" and CRC to "CRC-16/MODBUS".
+
+### Worked Example
+
+Here is a complete example of a status read from the earlier hex capture:
+
+**Client sends** (8 bytes — "read 80 input registers starting at register 0"):
+
+```
+11 04 00 00 00 50 A6 F2
+│  │  │     │     └──── CRC-16/Modbus
+│  │  │     └────────── Number of registers: 0x0050 = 80
+│  │  └──────────────── Starting register: 0x0000
+│  └─────────────────── Function code: 0x04 (Read Input Registers)
+└────────────────────── Device address: 0x11
+```
+
+**Device responds** (168 bytes — header echoes request, then 80 registers, then CRC):
+
+```
+Byte offset:  0  1  2  3  4  5 |  6  7  8  9 10 11 ...
+              11 04 00 00 00 50 | R0_H R0_L R1_H R1_L R2_H R2_L ...
+              ─── header ───── | ──────── register data ────────
+```
+
+Looking at the sample data from the capture, some values can be extracted:
+
+- Register 41 at offset `6 + (41 × 2) = 88`: state flags — check bits for USB/DC/AC/Light state
+- Register 56 at offset `6 + (56 × 2) = 118`: battery percent — divide by 10 for %
+- Register 59 at offset `6 + (59 × 2) = 124`: remaining time in minutes
