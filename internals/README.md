@@ -153,6 +153,7 @@ ARM: (Sends 168 bytes of data, last 2 bytes are the CRC)
 00 00 00 FF FF FF 00 00 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 98 33
+```
 
 The "WRITE" command is generally used in 3 ways:
 
