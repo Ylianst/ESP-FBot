@@ -9,8 +9,6 @@ MULTI_CONF = False
 
 CONF_REGISTER = "register"
 CONF_VALUE = "value"
-CONF_HANDLE_MIN = "handle_min"
-CONF_HANDLE_MAX = "handle_max"
 CONF_BLAST_INTERVAL = "blast_interval"
 CONF_BLAST_DURATION = "blast_duration"
 
@@ -25,10 +23,8 @@ CONFIG_SCHEMA = cv.All(
             cv.GenerateID(): cv.declare_id(FbotRescue),
             cv.Optional(CONF_REGISTER, default=2): cv.int_range(min=0, max=65535),
             cv.Optional(CONF_VALUE, default=0x00FF): cv.int_range(min=0, max=65535),
-            cv.Optional(CONF_HANDLE_MIN, default=0x0002): cv.int_range(min=1, max=65535),
-            cv.Optional(CONF_HANDLE_MAX, default=0x0020): cv.int_range(min=1, max=65535),
-            cv.Optional(CONF_BLAST_INTERVAL, default="500ms"): cv.positive_time_period_milliseconds,
-            cv.Optional(CONF_BLAST_DURATION, default="5s"): cv.positive_time_period_milliseconds,
+            cv.Optional(CONF_BLAST_INTERVAL, default="200ms"): cv.positive_time_period_milliseconds,
+            cv.Optional(CONF_BLAST_DURATION, default="10s"): cv.positive_time_period_milliseconds,
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
@@ -42,7 +38,5 @@ async def to_code(config):
 
     cg.add(var.set_register(config[CONF_REGISTER]))
     cg.add(var.set_value(config[CONF_VALUE]))
-    cg.add(var.set_handle_min(config[CONF_HANDLE_MIN]))
-    cg.add(var.set_handle_max(config[CONF_HANDLE_MAX]))
     cg.add(var.set_blast_interval(config[CONF_BLAST_INTERVAL]))
     cg.add(var.set_blast_duration(config[CONF_BLAST_DURATION]))

@@ -12,10 +12,27 @@ static const char *const TAG = "fbot_rescue";
 static const char *const SERVICE_UUID = "0000a002-0000-1000-8000-00805f9b34fb";
 static const char *const WRITE_CHAR_UUID = "0000c304-0000-1000-8000-00805f9b34fb";
 
+// Targeted handles: most probable positions for the custom write characteristic
+// value handle in an ESP-AT GATT server. We keep this small (~8 handles) so
+// every write actually reaches the BLE controller and goes over the air,
+// instead of being dropped due to L2CAP buffer overflow.
+//
+// ESP-AT GATT table layout variants:
+//   Minimal (GAP+GATT+custom):  custom char value at 0x000C
+//   With Device Info service:    custom char value at 0x0014-0x001A
+//   With extra services:         custom char value at 0x0028-0x0032
+const uint16_t FbotRescue::TARGET_HANDLES[] = {
+  0x000C, 0x000E, 0x0010, 0x0012,  // Minimal layout candidates
+  0x0016, 0x0018, 0x001A, 0x001C,  // Medium layout candidates
+  0x0020, 0x0022, 0x0024, 0x0026,  // Extended layout candidates
+  0x002A, 0x002C, 0x002E, 0x0030,  // Large layout candidates
+};
+const size_t FbotRescue::TARGET_HANDLES_COUNT = sizeof(TARGET_HANDLES) / sizeof(TARGET_HANDLES[0]);
+
 void FbotRescue::setup() {
   ESP_LOGI(TAG, "FBot Rescue mode active");
   ESP_LOGI(TAG, "  Target: register %d = 0x%04X", this->register_, this->value_);
-  ESP_LOGI(TAG, "  Handle scan range: 0x%04X - 0x%04X", this->handle_min_, this->handle_max_);
+  ESP_LOGI(TAG, "  Targeted handles: %d candidates", TARGET_HANDLES_COUNT);
   ESP_LOGI(TAG, "  Blast interval: %ums, duration: %ums", this->blast_interval_, this->blast_duration_);
 }
 
@@ -41,7 +58,7 @@ void FbotRescue::loop() {
       ESP_LOGD(TAG, "Writing to discovered handle 0x%04X", this->discovered_handle_);
       this->write_register(this->discovered_handle_);
     } else {
-      this->blast_all_handles();
+      this->blast_targeted_handles();
     }
   }
 }
@@ -50,7 +67,7 @@ void FbotRescue::dump_config() {
   ESP_LOGCONFIG(TAG, "FBot Rescue:");
   ESP_LOGCONFIG(TAG, "  Register: %d", this->register_);
   ESP_LOGCONFIG(TAG, "  Value: 0x%04X", this->value_);
-  ESP_LOGCONFIG(TAG, "  Handle range: 0x%04X - 0x%04X", this->handle_min_, this->handle_max_);
+  ESP_LOGCONFIG(TAG, "  Targeted handles: %d candidates", TARGET_HANDLES_COUNT);
   ESP_LOGCONFIG(TAG, "  Blast interval: %ums", this->blast_interval_);
   ESP_LOGCONFIG(TAG, "  Blast duration: %ums", this->blast_duration_);
 }
@@ -77,7 +94,7 @@ void FbotRescue::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t g
       this->last_blast_time_ = 0;  // Force immediate first blast
 
       // Fire first blast right now
-      this->blast_all_handles();
+      this->blast_targeted_handles();
       break;
     }
 
@@ -154,11 +171,11 @@ void FbotRescue::write_register(uint16_t handle) {
   // Silently ignore failures - many handles will be invalid
 }
 
-void FbotRescue::blast_all_handles() {
-  ESP_LOGD(TAG, "Blasting handles 0x%04X-0x%04X (total writes so far: %u)",
-           this->handle_min_, this->handle_max_, this->write_count_);
-  for (uint16_t h = this->handle_min_; h <= this->handle_max_; h++) {
-    this->write_register(h);
+void FbotRescue::blast_targeted_handles() {
+  ESP_LOGD(TAG, "Blasting %d targeted handles (total writes so far: %u)",
+           TARGET_HANDLES_COUNT, this->write_count_);
+  for (size_t i = 0; i < TARGET_HANDLES_COUNT; i++) {
+    this->write_register(TARGET_HANDLES[i]);
   }
 }
 

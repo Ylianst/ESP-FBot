@@ -23,21 +23,23 @@ class FbotRescue : public esphome::ble_client::BLEClientNode, public Component {
 
   void set_register(uint16_t reg) { this->register_ = reg; }
   void set_value(uint16_t value) { this->value_ = value; }
-  void set_handle_min(uint16_t handle_min) { this->handle_min_ = handle_min; }
-  void set_handle_max(uint16_t handle_max) { this->handle_max_ = handle_max; }
   void set_blast_interval(uint32_t interval) { this->blast_interval_ = interval; }
   void set_blast_duration(uint32_t duration) { this->blast_duration_ = duration; }
 
  protected:
   uint16_t calculate_checksum(const uint8_t *data, size_t len);
   void write_register(uint16_t handle);
-  void blast_all_handles();
+  void blast_targeted_handles();
+
+  // High-probability handles for ESP-AT custom GATT characteristic value.
+  // Layout depends on how many standard services exist before the custom service.
+  // We cover the most common positions without flooding the L2CAP buffer.
+  static const uint16_t TARGET_HANDLES[];
+  static const size_t TARGET_HANDLES_COUNT;
 
   // Configuration
   uint16_t register_{2};
   uint16_t value_{0x00FF};
-  uint16_t handle_min_{0x0002};
-  uint16_t handle_max_{0x0020};
   uint32_t blast_interval_{500};
   uint32_t blast_duration_{5000};
 
