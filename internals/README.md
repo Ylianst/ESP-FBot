@@ -414,7 +414,7 @@ EN (Reset) *   * 21 UART TX   <-- ESP32 to ARM (CUT THIS ONE)
 
 Do turn off the power station before starting and  note that voltage will never be zero all over the unit because it's a battery. What I did is to use an exacto knife and gently scrape the solder between the ESP32 and the pad away using many passes. You can see it in this picture (cut at the red line):
 
-<img src="images/board-esp32-serial.jpeg" alt="Removing the ESP32 TX pin" width="400"/>
+<img src="images/battery-esp-tx-cut.jpeg" alt="Removing the ESP32 TX pin" width="400"/>
 
 You could also remove the resistance on that same wire or cut the "EN" or "3.3v" and it would also make the PowerStation work again by disabling the ESP32. However, I recommnend this approche since by cutting the TX pin, it's possible to later fix the Bluetooth/WIFI by taking over the TX pin pad and once fixed, re-solder the TX pin.
 
