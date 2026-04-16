@@ -418,4 +418,4 @@ First, turn off the power station, note that voltage will not be zero all over t
 
 You could also remove the resistance on that same wire or cut the "EN" or "3.3v" and it would also make the PowerStation work again by disabling the ESP32. However, I recommnend this approche since by cutting the TX pin, it's possible to later fix the Bluetooth/WIFI by taking over the TX pin pad and once fixed, re-solder the TX pin.
 
-Having access to the disconnected TX pin pad on the board give you the option to wire a different ESP32 computer and work on fixing the problem. So, this is why I recommand it.
+Having access to the disconnected TX pin pad on the board gives you the option to wire a different ESP32 computer and work on fixing the problem. So, this is why I recommand it.
