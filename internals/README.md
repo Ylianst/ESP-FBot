@@ -400,21 +400,21 @@ You can only see one direction at a time (to the ESP32 or from the ESP32) but yo
 
 If your PowerStation reboots every 7 to 8 seconds making it unusable, it's going to be difficult to fix because Bluetooth never gets up and running before the next reboot and so, you can't send any commands to the battery to attempt to fix it. A quick way to get the PowerStation back up and running again is to find the ESP32 chip that looks like this:
 
-<img src="images/board-esp32.jpeg" alt="AFERIY P310 ESP32" width="400"/>
+<img src="images/board-esp32-cut.png" alt="Removing the ESP32 TX pin" width="400"/>
 
-And cut the "UART TX" pin, making it impossible for the ESP32 to send commands back to the ARM processor. The pin to cut to on the right side of the ESP32, the 4th from the top.
+And cut the "UART TX" pin (red line on the picture), making it impossible for the ESP32 to send commands back to the ARM processor. The pin to cut is on the right side of the ESP32, the 4th from the top.
 
 ```
     Ground *   * Ground
       3.3v *   * Ground
     Ground *   * Ground
-EN (Reset) *   * 21 UART TX   <-- ESP32 to ARM (**CUT THIS ONE**)
+EN (Reset) *   * 21 UART TX   <-- ESP32 to ARM (CUT THIS ONE)
     Ground *   * 20 UART RX   <-- ARM to ESP32
 ```
 
-First, turn off the power station, note that voltage will not be zero all over the unit because it's a battery. What I did is to use an exacto knife and gently scrape the solder between the ESP32 and the pad away using many passes. You can see it in this picture (cut at the red line):
+Do turn off the power station before starting and  note that voltage will never be zero all over the unit because it's a battery. What I did is to use an exacto knife and gently scrape the solder between the ESP32 and the pad away using many passes. You can see it in this picture (cut at the red line):
 
-<img src="images/board-esp32-cut.png" alt="Removing the ESP32 TX pin" width="400"/>
+<img src="images/board-esp32-serial.jpeg" alt="Removing the ESP32 TX pin" width="400"/>
 
 You could also remove the resistance on that same wire or cut the "EN" or "3.3v" and it would also make the PowerStation work again by disabling the ESP32. However, I recommnend this approche since by cutting the TX pin, it's possible to later fix the Bluetooth/WIFI by taking over the TX pin pad and once fixed, re-solder the TX pin.
 
