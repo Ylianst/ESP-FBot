@@ -90,6 +90,8 @@ ESP: +BLEADDR:"a8:46:74:41:4c:42"\r\nOK\r\n
 ARM: AT+BLEADVDATAEX="POWER-7E83","7e83","99A84674414C4200",1\r\n    <-- Broadcast a Bluetooh advertising packets
 ESP: AT+BLEADVDATAEX="POWER-7E83","7e83","99A84674414C4200",1\r\n
 ESP: \r\nOK\r\n
+ARM: AT+BLEADVSTART\r\n
+ESP: AT+BLEaDVSTaRT\r\n
 ```
 
 You notice that except for the initial reset command, the ESP32 will echo back the command it received from the ARM chip and then respond to it. You can see a bunch of "BLE" (Bluetooth) messages to get Bluetooth started. At this point, the battery is ready to receive Bluetooth messages. Let's now see what connecting a Bluetooth clients does. I am going to use a HomeAssistant ESP-FBot ESP32 as client to connect to the battery:
@@ -393,3 +395,27 @@ If you ever want to look at the traffic between the ARM and ESP32 chips, you can
 <img src="images/board-esp32-serial.jpeg" alt="Looking at the serial traffic" width="400"/>
 
 You can only see one direction at a time (to the ESP32 or from the ESP32) but you will see the AT commands in text form on putty as they arrive. I personnaly manually hold the pins to the ESP32 pads since they are prety large and so, not difficult to do. Using a multi channel logic analyser is better since you get all of the timing data and data in both directions, but a simple serial adapter does work. You will not be able to transmit using your adapter, only receive.
+
+### Fixing a PowerStation in a Boot Loop
+
+If your PowerStation reboots every 7 to 8 seconds making it unusable, it's going to be difficult to fix because Bluetooth never gets up and running before the next reboot and so, you can't send any commands to the battery to attempt to fix it. A quick way to get the PowerStation back up and running again is to find the ESP32 chip that looks like this:
+
+<img src="images/board-esp32.jpeg" alt="AFERIY P310 ESP32" width="400"/>
+
+And cut the "UART TX" pin, making it impossible for the ESP32 to send commands back to the ARM processor. The pin to cut to on the right side of the ESP32, the 4th from the top.
+
+```
+    Ground *   * Ground
+      3.3v *   * Ground
+    Ground *   * Ground
+EN (Reset) *   * 21 UART TX   <-- ESP32 to ARM (**CUT THIS ONE**)
+    Ground *   * 20 UART RX   <-- ARM to ESP32
+```
+
+First, turn off the power station, note that voltage will not be zero all over the unit because it's a battery. What I did is to use an exacto knife and gently scrape the solder between the ESP32 and the pad away using many passes. You can see it in this picture (cut at the red line):
+
+<img src="images/board-esp32-cut.png" alt="Removing the ESP32 TX pin" width="400"/>
+
+You could also remove the resistance on that same wire or cut the "EN" or "3.3v" and it would also make the PowerStation work again by disabling the ESP32. However, I recommnend this approche since by cutting the TX pin, it's possible to later fix the Bluetooth/WIFI by taking over the TX pin pad and once fixed, re-solder the TX pin.
+
+Having access to the disconnected TX pin pad on the board give you the option to wire a different ESP32 computer and work on fixing the problem. So, this is why I recommand it.
