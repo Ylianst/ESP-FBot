@@ -388,7 +388,7 @@ Looking at the sample data from the capture, some values can be extracted:
 - Register 56 at offset `6 + (56 × 2) = 118`: battery percent — divide by 10 for %
 - Register 59 at offset `6 + (59 × 2) = 124`: remaining time in minutes
 
-### Performing a Serial Capture
+## Performing a Serial Capture
 
 If you ever want to look at the traffic between the ARM and ESP32 chips, you can get a "CP2102 USB to TTL Serial Adapter" online and connect the RX wire of the adapter to the pins RX or TX pin of the ESP32. You can then run a terminal like Putty at 115400 bauds and see the traffic.
 
@@ -396,7 +396,7 @@ If you ever want to look at the traffic between the ARM and ESP32 chips, you can
 
 You can only see one direction at a time (to the ESP32 or from the ESP32) but you will see the AT commands in text form on putty as they arrive. I personnaly manually hold the pins to the ESP32 pads since they are prety large and so, not difficult to do. Using a multi channel logic analyser is better since you get all of the timing data and data in both directions, but a simple serial adapter does work. You will not be able to transmit using your adapter, only receive.
 
-### Fixing a PowerStation in a Boot Loop
+## Fixing a PowerStation in a Boot Loop
 
 If your PowerStation reboots every 7 to 8 seconds making it unusable, it's going to be difficult to fix because Bluetooth never gets up and running before the next reboot and so, you can't send any commands to the battery to attempt to fix it. A quick way to get the PowerStation back up and running again is to find the ESP32 chip that looks like this:
 
