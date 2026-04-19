@@ -419,3 +419,11 @@ Do turn off the power station before starting and  note that voltage will never 
 You could also remove the resistance on that same wire or cut the "EN" or "3.3v" and it would also make the PowerStation work again by disabling the ESP32. However, I recommnend this approche since by cutting the TX pin, it's possible to later fix the Bluetooth/WIFI by taking over the TX pin pad and once fixed, re-solder the TX pin.
 
 Having access to the disconnected TX pin pad on the board gives you the option to wire a different ESP32 computer and work on fixing the problem. So, this is why I recommend it.
+
+Now, the that ESP32 TX pin is disconnected, I used a USB-to-Serial device to connect the RX and TX pins. Once setup I had AI try to emulate the ESP32 and send commands to recover the battery, however after many tries, it's not been succesful. Here my serial connection setup.
+
+<img src="images/battery-serial-commands.jpeg" alt="Removing the ESP32 TX pin" width="400"/>
+
+The goal was to try to send commands to get the settings registers and fix the incorrect ones, however all attempts to send commands to get or set the settings registers failed and if I respond like the real ESP32, I cause the boot loop. So, I decided to re-assemble the battery with the ESP32 TX pin disconnect and use it without WIFI/Bluetooth. It looks like it works well otherwise.
+
+One thing I did not try is that now that I have the battery working without a boot loop, maybe doing a reset by holding Light/USB/DC buttons at the same time and then try again, but anyway. The battery works again (mostly).
