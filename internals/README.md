@@ -424,6 +424,8 @@ Now, the that ESP32 TX pin is disconnected, I used a USB-to-Serial device to con
 
 <img src="images/battery-serial-commands.jpeg" alt="Removing the ESP32 TX pin" width="400"/>
 
+I used some hospital gear to hold the pins in the right place and it worked great. I have to hold the TX pin of my USB-to-Serial exactly on the ESP32 TX pin pad on the board and was able to do that without issue.
+
 The goal was to try to send commands to get the settings registers and fix the incorrect ones, however all attempts to send commands to get or set the settings registers failed and if I respond like the real ESP32, I cause the boot loop. So, I decided to re-assemble the battery with the ESP32 TX pin disconnect and use it without WIFI/Bluetooth. It looks like it works well otherwise.
 
 One thing I did not try is that now that I have the battery working without a boot loop, maybe doing a reset by holding Light/USB/DC buttons at the same time and then try again, but anyway. The battery works again (mostly).
